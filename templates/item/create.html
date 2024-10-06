@@ -1,0 +1,66 @@
+
+{% extends "base.html" %}
+{% block title %} new item {% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">new item</h1>
+<form class="card" method="POST" enctype="multipart/form-data">
+    <div class="card-body">
+
+        <div class="mb-2">
+            <sup>title</sup>
+            <input
+                type="text"
+                required
+                name="title"
+                placeholder="item title"
+                class="form-control"
+            />
+        </div>
+
+        <div class="mb-2">
+        <sup>description</sup>
+        <textarea class="form-control" name="description" maxlength="333" spellcheck></textarea>
+        <div id="help" class="form-text">up to 200 characters</div>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <div class="mb-2">
+            <input
+                type="file"
+                name="file"
+                class="form-control"
+            />
+            <div id="help" class="form-text">image ~ 800px ~ 1mb</div>
+        </div>
+        <div class="m-2">
+            <button type="submit" class="btn btn-outline-primary btn-sm">
+                submit
+            </button>
+        </div>
+    </div>
+
+</form>
+
+<div class="card">
+    <div class="card-footer">
+    <a class="btn btn-outline-primary btn-sm m-2" href="/item/item-export-csv">tm export csv</a>
+    <a class="btn btn-outline-primary btn-sm m-2" href="/item/item-import-csv">tm import csv</a>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block script %}
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.js"></script>
+
+<script>
+    const editor = Jodit.make('textarea');
+</script>
+
+{% endblock %}

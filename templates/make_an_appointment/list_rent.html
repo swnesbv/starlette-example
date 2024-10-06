@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+{% block title %} list rent reserve {% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">
+list reserve rent.. user: {{ request.user.user_id }}
+</h1>
+
+<div class="flex_start">
+    {% if obj_list %}
+    {% for i in obj_list %}
+    <div class="card mt-2 me-1">
+
+    <ul class="card-header list-group list-group-horizontal">
+        <li class="list-group-item pt-3">
+            <sup class="float-start">id:</sup>
+            <span class="me-3">{{ i.id }}</span>
+        </li>
+        <li class="list-group-item pt-3">
+            <sup class="float-start">owner reserve:</sup>
+            <span>{{ i.owner }}</span>
+        </li>
+        <li class="list-group-item pt-3">
+            <sup class="float-start">reserve item:</sup>
+            <span>{{ i.rrf_item_id }}</span>
+        </li>
+    </ul>
+
+    <ul class="card-header list-group list-group-horizontal">
+        <li class="list-group-item pt-3">
+            <sup class="float-start">start:</sup>
+            <time>{{ i.time_start.strftime("%d-%m-%YT %H:%M") }}</time>
+        </li>
+        <li class="list-group-item pt-3">
+            <sup class="float-start">end:</sup>
+            <time>{{ i.time_end.strftime("%d-%m-%Y %H:%M") }}</time>
+        </li>
+    </ul>
+
+    <ul class="card-body list-group list-group-flush">
+        <li class="list-group-item">
+            <sup class="float-start">description:</sup>
+            <p>{{ i.description | striptags() | truncate(190, True, '...', 5) | safe }}</p>
+        </li>
+        {% include "created_modified.html" %}
+    </ul>
+
+    <div class="card-footer">
+        <a class="btn btn-outline-primary btn-sm" href="/reserve/detail-rent/{{ i.id }}">
+            detail
+        </a>
+    </div>
+
+    </div>
+    {% endfor %}
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+
+{% extends "base.html" %}
+{% block title %} schedule import csv {% endblock %}
+
+{% block content %}
+
+    <h1 class="lead my-3">schedule import csv..</h1>
+    <form class="card p-3" method="POST" enctype="multipart/form-data">
+        <div class="card-body m-2">
+            <input type="file" name="filename" accept=".csv" class="btn btn-outline-primary btn-sm">
+        </div>
+        <div class="card-footer m-2">
+            <button type="submit" class="btn btn-outline-primary btn-sm">
+                submit
+            </button>
+        </div>
+    </form>
+
+{% endblock %}

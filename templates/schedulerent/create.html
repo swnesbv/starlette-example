@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %} create schedule rent {% endblock%}
+
+{% block calendar_css %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">create schedule rent..</h1>
+
+<form class="card" method="POST">
+    <div class="card-header mb-2">
+        <select
+            required
+            name="sch_r_rent_id"
+            class="form-control shadow-sm">
+            <option value="">rent select</option>
+
+            {% for i in obj_list %}
+                <option value="{{ i.id }},{{ i.rent_belongs }}">
+                    {{ i.id }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="card-body row">
+
+        <div class="col-sm mb-2">
+            <sup class="float-start">start</sup>
+            <input
+                type="datetime-local"
+                required
+                name="start"
+                class="form-control mt-2"
+            />
+        </div>
+
+        <div class="col-sm mb-2">
+            <sup class="float-start">end</sup>
+            <input
+                type="datetime-local"
+                required
+                name="end"
+                class="form-control mt-2"
+            />
+        </div>
+
+        <div class="mb-2">
+            <sup>title</sup>
+            <input
+                type="text"
+                required
+                placeholder="title"
+                name="title"
+                value="schedule rent 01"
+                class="form-control"
+            />
+        </div>
+
+        <div class="mb-2">
+            <sup>description</sup>
+            <textarea
+                class="form-control"
+                name="description"
+                maxlength="333"
+                spellcheck
+            ></textarea>
+        </div>
+    </div>
+
+    <div class="card-footer">
+    <button type="submit" class="btn btn-outline-primary btn-sm">
+        submit
+    </button>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block calendar_js %}
+{% endblock %}

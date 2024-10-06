@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+{% block title %} list srv in user sch {% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">list service in user schedule..</h1>
+<div class="card">
+    <div class="card-header">
+    <h2 class="lead m-2">
+        <sup>
+            services: who have a ScheduleService from your account
+        </sup>
+    </h2>
+    <span>total services: {{ obj_count | max }}</span>
+    </div>
+</div>
+
+<div class="flex_start">
+    {% for i in obj_list %}
+    <div class="card mt-2 me-1">
+        <div class="card-header"><sup>service</sup></div>
+
+        <ul class="card-header list-group list-group-horizontal">
+            <li class="list-group-item pt-3">
+                <sup class="float-start">id:</sup>
+                <span>{{ i.id }}</span>
+            </li>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">owner:</sup>
+                <span>{{ i.owner }}</span>
+            </li>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">service_belongs:</sup>
+                <span>{{ i.service_belongs }}</span>
+            </li>
+        </ul>
+
+        <ul class="card-body list-group list-group-flush">
+            <li class="list-group-item">
+                <sup class="float-start">title:</sup>
+                <p>{{ i.title }}</p>
+            </li>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">description:</sup>
+                <p>
+                    {{ i.description | striptags() | truncate(190, True, '...', 5) | safe }}
+                </p>
+            </li>
+            {% include "created_modified.html" %}
+        </ul>
+
+        <div class="card-footer">
+        <a class="btn btn-outline-primary btn-sm" href="/item/scheduleservice/list/{{ i.id }}" role="button">
+            view service schedule &raquo;
+        </a>
+        </div>
+        
+        <div class="card-footer">
+        <a class="btn btn-primary btn-sm me-2" href="/item/dump_{{ i.id }}" role="button">
+            export csv &raquo;
+        </a>
+        <a class="btn btn-primary btn-sm me-2" href="/item/dump-csv/{{ i.id }}" role="button">
+            my dump csv &raquo;
+        </a>
+        </div>
+
+        <div class="card-footer">
+        <a class="btn btn-outline-primary btn-sm" href="/item/import-csv/{{ i.id }}" role="button">
+            import csv &raquo;
+        </a>
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

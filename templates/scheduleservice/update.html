@@ -1,0 +1,99 @@
+
+{% extends "base.html" %}
+{% block title %} update schedule service {{ i.name }}{% endblock %}
+
+{% block calendar_css %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">update schedule service..</h1>
+
+<form class="card" method="POST">
+
+    <div class="card-body row">
+
+        <div class="col-sm mb-2">
+            <sup class="float-start">date</sup>
+            <input
+                type="date"
+                name="number_on"
+                value="{{ i.number_on }}"
+                class="form-control my-2"
+            />
+        </div>
+
+        <div class="col-sm mb-2">
+            <sup class="float-start">there_is</sup>
+            <input
+                required
+                type="datetime-local"
+                name="there_is"
+                value="{{ i.there_is }}"
+                class="form-control mt-2"
+            />
+        </div>
+
+        <div class="mb-2">
+            <sup>title</sup>
+            <input
+                type="text"
+                name="title"
+                value="{{ i.title }}"
+                class="form-control mt-2"
+            />
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <sup>name</sup>
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ i.name }}"
+                    class="form-control"
+                />
+            </div>
+
+            <div class="col-sm">
+                <sup>type_on</sup>
+                <select
+                    name="type_on"
+                    class="form-control shadow-sm">
+                    <option value="{{ i.type_on.name }}">
+                        {{ i.type_on.name }}
+                    </option>
+
+                    {% for i in objects %}
+                        <option value="{{ i.name }}">
+                            {{ i.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <sup>description</sup>
+            <textarea
+                class="form-control"
+                name="description"
+                maxlength="333"
+                spellcheck
+            >{{ i.description }}</textarea>
+        </div>
+
+    </div>
+
+    <div class="card-footer m-2">
+        <button type="submit" class="btn btn-outline-primary btn-sm">
+            submit
+        </button>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block calendar_js %}
+{% endblock %}

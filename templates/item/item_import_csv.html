@@ -1,0 +1,41 @@
+
+{% extends "base.html" %}
+{% block title %} import csv item {% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-3">import csv item</h1>
+<form class="card" method="POST" enctype="multipart/form-data">
+
+        <div class="card-footer">
+            <div class="mb-2">
+                <input
+                    type="file"
+                    name="url_f"
+                    class="form-control"
+                />
+                <div id="help" class="form-text"></div>
+            </div>
+            <div class="m-2 ">
+                <button type="submit" class="btn btn-outline-primary btn-sm">
+                    submit
+                </button>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+{% endblock %}
+
+
+{% block script %}
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.js"></script>
+
+<script>
+    const editor = Jodit.make('textarea');
+</script>
+
+{% endblock %}

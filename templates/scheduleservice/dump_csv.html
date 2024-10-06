@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+{% block title %} list dump {% endblock %}
+
+{% block content %}
+
+    <h1 class="lead my-3">list service dump..</h1>
+
+<div class="flex_start">
+    {% if obj_list %}
+    {% for i in obj_list %}
+    <div class="card mt-2 me-1">
+
+        <ul class="card-header list-group list-group-horizontal">
+            <li class="list-group-item">
+                <sup class="float-start">dump id:</sup>
+                <span class="me-3">{{ i.id }}</span>
+            </li>
+            <li class="list-group-item">
+                <sup class="float-start">owner:</sup>
+                {{ i.owner }}
+            </li>
+            <li class="list-group-item">
+                <sup class="float-start">service:</sup>
+                {{ i.dump_s_service_id }}
+            </li>
+        </ul>
+
+        <ul class="card-body list-group list-group-horizontal">
+            <li class="list-group-item">
+                <sup class="float-start">dump title:</sup>
+                <time>
+                    {{ i.title.strftime('%Y-%m-%d-%H-%M-%S') }}
+                </time>
+            </li>
+        </ul>
+
+        <div class="card-footer">
+        <a class="btn btn-primary btn-sm" href="/static/service/{{ i.title.strftime('%Y-%m-%d-%H-%M-%S') }}.csv">
+            download {{ i.title.strftime('%Y-%m-%d-%H-%M-%S') }} &raquo;
+        </a>
+        </div>
+
+        <div class="card-footer">
+        <a class="btn btn-success btn-sm" href="/item/dump/{{ i.id }}" role="button">
+            dump user csv &raquo;
+        </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    </div>
+
+{% endblock %}

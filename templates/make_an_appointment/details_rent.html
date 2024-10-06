@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+{% block title %} reserve rent {{ i.title }} {% endblock %}
+
+{% block content %}
+
+    <h1 class="lead my-3">detail reserve rent</h1>
+
+    <div class="card me-2 mb-3">
+
+        <ul class="card-header list-group list-group-horizontal">
+            <li class="list-group-item pt-3">
+                <sup class="float-start">reserve id:</sup>
+                <span class="me-3">{{ i.id }}</span>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">owner reserve:</sup>
+                <span>{{ i.owner }}</span>
+            </li>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">reserve item:</sup>
+                {{ i.rrf_item_id }}
+            </li>
+        </ul>
+
+        <ul class="card-header list-group list-group-horizontal">
+            {% include "created_modified.html" %}
+        </ul>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item pt-3">
+                <sup class="float-start">description:</sup>
+                <p>{{ i.description }}</p>
+            </li>
+            <li class="list-group-item pt-3">
+                <sup class="float-start">reserve period:</sup>
+                <p>{{ i.reserve_period }}</p>
+            </li>
+        </ul>
+
+    {% if request.user.is_authenticated %}
+
+    <div class="card-header">
+        <a class="btn btn-outline-primary btn-sm me-2" href="/reserve/update-rent/{{ i.id }}" role="button">
+            <i class="bi bi-pencil"></i> &raquo;
+        </a>
+        <a class="btn btn-outline-danger btn-sm" href="/reserve/delete-rrf/{{ i.id }}" role="button">
+            <i class="bi bi-trash3"></i> &raquo;
+        </a>
+    </div>
+
+    {% endif %}
+
+    </div>
+
+{% endblock %}

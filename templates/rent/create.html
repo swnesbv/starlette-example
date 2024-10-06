@@ -1,0 +1,70 @@
+
+{% extends "base.html" %}
+{% block title %} new rent {% endblock %}
+
+{% block content %}
+
+<h1 class="lead my-2">new rent</h1>
+
+<form class="card" method="POST" enctype="multipart/form-data">
+    <div class="card-header">
+        <select
+            name="belongs"
+            class="form-control shadow-sm">
+            <option value="">item select</option>
+
+            {% for i in obj_item %}
+                <option value="{{ i.id }}">
+                    id: {{ i.id }} title: {{ i.title }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+    <div class="card-body">
+
+        <div class="mb-2">
+            <sup>title</sup>
+            <input
+                type="text"
+                required
+                name="title"
+                placeholder="rent 01"
+                class="form-control"
+            />
+        </div>
+
+        <div>
+        <sup>description</sup>
+        <textarea class="form-control" name="description" maxlength="333" spellcheck></textarea>
+            <div id="help" class="form-text">help text</div>
+        </div>
+        
+    </div>
+    <div class="card-footer">
+        <input
+            type="file"
+            name="file"
+            class="form-control"
+        />
+    </div>
+    <div class="card-footer">
+    <button type="submit" class="btn btn-outline-primary btn-sm">
+        submit
+    </button>
+    </div>
+</form>
+
+{% endblock %}
+
+
+{% block script %}
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.17.1/jodit.min.js"></script>
+
+<script>
+    const editor = Jodit.make('textarea');
+</script>
+
+{% endblock %}

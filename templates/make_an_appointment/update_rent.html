@@ -1,0 +1,49 @@
+
+{% extends "base.html" %}
+{% block title %} update reserve rent {{ i.id }} {% endblock%}
+
+{% block content %}
+
+<h1 class="lead my-3">update reserve rent..</h1>
+<sup>{{ rsv_period }}</sup>
+
+<form class="card" method="POST">
+    <div class="card-body row m-2">
+
+    <div class="col-sm">
+        <sup class="float-start">start</sup>
+        <input
+            class="mt-3"
+            type="date"
+            name="time_start"
+            value="{{ i.time_start }}"
+        />
+    </div>
+
+    <div class="col-sm">
+        <sup class="float-start">end</sup>
+        <input
+            class="mt-3"
+            type="date"
+            name="time_end"
+            value="{{ i.time_end }}"
+        />
+    </div>
+
+    <div class="mt-3">
+        <sup>description</sup>
+        <textarea
+            class="form-control"
+            name="description"
+            maxlength="333"
+            spellcheck
+        >{{ i.description }}</textarea>
+    </div>
+
+    <div class="card-footer m-2">
+        <button type="submit" class="btn btn-outline-primary btn-sm">submit</button>
+    </div>
+
+</form>
+
+{% endblock %}
