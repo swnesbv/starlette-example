@@ -1,9 +1,9 @@
 import os, jwt, json, string, secrets, functools
 
-from sqlalchemy import and_, or_, not_, true, false
+from sqlalchemy import and_, true
 from sqlalchemy.future import select
 
-from starlette.responses import RedirectResponse, PlainTextResponse
+from starlette.responses import RedirectResponse
 
 from db_config.settings import settings
 from db_config.storage_config import engine, async_session
@@ -19,42 +19,73 @@ algorithm = settings.JWT_ALGORITHM
 EMAIL_TOKEN_EXPIRY_MINUTES = settings.EMAIL_TOKEN_EXPIRY_MINUTES
 
 
-async def get_random_string():
-    alphabet = string.ascii_letters + string.digits
-    prv_key = "".join(secrets.choice(alphabet) for i in range(32))
-    return prv_key
+async def token_privileged(request, session, model):
+    token = request.cookies.get("privileged")
+    if token:
+        payload = jwt.decode(request.cookies.get("privileged"), key, algorithm)
+        prv_key = payload["prv_key"]
+        stmt = await session.execute(
+            select(Privileged)
+            .where(Privileged.prv_key == prv_key)
+        )
+        prv = stmt.scalars().first()
+        stmt = await session.execute(
+            select(User).where(and_(User.id == prv.prv_in, User.privileged, true()))
+        )
+        prv = stmt.scalars().first()
+        stmt = await session.execute(
+            select(model).where(model.owner == prv.id)
+        )
+        result = stmt.scalars().all()
+        return result
 
 
 # ...
 async def get_token_privileged(request):
-    if request.cookies.get("privileged"):
-        token = request.cookies.get("privileged")
-        if token:
-            payload = jwt.decode(token, key, algorithm)
+    while True:
+        if not request.cookies.get("privileged"):
+            break
+        if request.cookies.get("privileged"):
+            payload = jwt.decode(request.cookies.get("privileged"), key, algorithm)
             prv_key = payload["prv_key"]
             return prv_key
 
-
 async def get_privileged(request, session):
-    token = await get_token_privileged(request)
-    stmt = await session.execute(
-        select(Privileged)
-        .where(Privileged.prv_key == token)
-    )
-    result = stmt.scalars().first()
-    return result
-
+    while True:
+        token = await get_token_privileged(request)
+        if not token:
+            break
+        if token:
+            stmt = await session.execute(
+                select(Privileged)
+                .where(Privileged.prv_key == token)
+            )
+            result = stmt.scalars().first()
+            return result
 
 async def get_privileged_user(request, session):
     while True:
         prv = await get_privileged(request, session)
         if not prv:
             break
-        stmt = await session.execute(
-            select(User).where(and_(User.id == prv.prv_in, User.privileged, true()))
-        )
-        result = stmt.scalars().first()
-        return result
+        if prv:
+            stmt = await session.execute(
+                select(User).where(and_(User.id == prv.prv_in, User.privileged, true()))
+            )
+            result = stmt.scalars().first()
+            return result
+
+async def get_owner_prv(request, session, model):
+    while True:
+        prv = await get_privileged_user(request, session)
+        if not prv:
+            break
+        if prv:
+            stmt = await session.execute(
+                select(model).where(model.owner == prv.id)
+            )
+            result = stmt.scalars().all()
+            return result
 
 
 def privileged():
@@ -83,15 +114,6 @@ async def id_and_owner_prv(request, session, model, id):
         )
     )
     result = stmt.scalars().first()
-    return result
-
-
-async def get_owner_prv(request, session, model):
-    prv = await get_privileged_user(request, session)
-    stmt = await session.execute(
-        select(model).where(model.owner == prv.id)
-    )
-    result = stmt.scalars().all()
     return result
 
 
@@ -163,3 +185,10 @@ async def dump_schedule_service(request, session, id):
     )
     result = stmt.scalars().all()
     return result
+
+
+
+async def get_random_string():
+    alphabet = string.ascii_letters + string.digits
+    prv_key = "".join(secrets.choice(alphabet) for i in range(32))
+    return prv_key

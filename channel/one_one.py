@@ -1,5 +1,4 @@
-
-from sqlalchemy import select, insert, update as sqlalchemy_update, delete
+from sqlalchemy import update as sqlalchemy_update, delete
 
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, PlainTextResponse

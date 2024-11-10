@@ -1,4 +1,3 @@
-
 from sqlalchemy import update as sqlalchemy_update, delete
 from sqlalchemy.future import select
 

@@ -1,6 +1,3 @@
-
-from datetime import datetime
-
 import json
 
 from sqlalchemy.future import select
@@ -17,7 +14,7 @@ from options_select.opt_slc import (
     rent_comment,
 )
 
-from auth_privileged.opt_slc import privileged, id_and_owner_prv, get_owner_prv
+from auth_privileged.opt_slc import privileged, id_and_owner_prv, token_privileged
 
 from .create_update import child_img_create, child_img_update
 
@@ -115,13 +112,14 @@ async def rent_list_prv(request):
 
     async with async_session() as session:
         # ..
-        obj_list = await get_owner_prv(request, session, Rent)
-        # ..
-        context = {
-            "request": request,
-            "obj_list": obj_list,
-        }
-        return templates.TemplateResponse(template, context)
+        i = await token_privileged(request, session, Rent)
+        if i:
+            context = {
+                "request": request,
+                "obj_list": i,
+            }
+            return templates.TemplateResponse(template, context)
+        return RedirectResponse("/privileged/login")
     await engine.dispose()
 
 

@@ -1,4 +1,3 @@
-
 from sqlalchemy import insert, update as sqlalchemy_update, delete
 
 from starlette.templating import Jinja2Templates
@@ -33,6 +32,7 @@ async def group_list(request):
         return templates.TemplateResponse(template, context)
     await engine.dispose()
 
+
 @auth()
 # ..request.auth.scopes
 async def group_details(request):
@@ -40,13 +40,14 @@ async def group_details(request):
     id = request.path_params["id"]
     id_group = request.path_params["id"]
     template = "/group/details.html"
-
     if request.method == "GET":
         async with async_session() as session:
             # ..
             i = await for_id(session, GroupChat, id)
             prv = await get_privileged_user(request, session)
-            group_chat = await left_right_all(session, MessageGroup, MessageGroup.id_group, id)
+            group_chat = await left_right_all(
+                session, MessageGroup, MessageGroup.id_group, id
+            )
             # ..
             context = {
                 "request": request,
@@ -57,20 +58,14 @@ async def group_details(request):
             }
             # ..
             if prv:
-                for_prv = await in_obj_participant(
-                    session, prv.id, id
-                )
-                for_prv_accepted = await in_obj_accepted(
-                    session, prv.id, id
-                )
+                for_prv = await in_obj_participant(session, prv.id, id)
+                for_prv_accepted = await in_obj_accepted(session, prv.id, id)
                 # ..
                 context["for_prv"] = for_prv
                 context["for_prv_accepted"] = for_prv_accepted
             # ..
             if request.cookies.get("visited"):
-                for_user = await in_obj_participant(
-                    session, request.user.user_id, id
-                )
+                for_user = await in_obj_participant(session, request.user.user_id, id)
                 for_user_accepted = await in_obj_accepted(
                     session, request.user.user_id, id
                 )

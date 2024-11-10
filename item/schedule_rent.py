@@ -2,7 +2,7 @@ from datetime import datetime
 
 import json
 
-from sqlalchemy import update as sqlalchemy_update, delete, and_
+from sqlalchemy import delete
 
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, PlainTextResponse
