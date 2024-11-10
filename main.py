@@ -1,4 +1,3 @@
-
 import uvicorn
 
 from sqlalchemy.future import select

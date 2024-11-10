@@ -13,6 +13,8 @@ from make_an_appointment.urls import routes as reserve_routes
 
 # ..
 from api_starlette.urls import routes as api_routes
+# ..
+from sitemap.urls import routes as sitemap_routes
 
 
 routes = [
@@ -27,5 +29,7 @@ routes = [
     Mount("/participant", routes=participant_routes),
     # ..
     Mount("/api", routes=api_routes),
+    # ..
+    Mount("/sitemap", routes=sitemap_routes),
 
 ]

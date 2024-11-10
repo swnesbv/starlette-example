@@ -42,6 +42,7 @@ async def user_register(request):
     template = "/auth/register.html"
 
     async with async_session() as session:
+
         if request.method == "POST":
             form = await request.form()
             name = form["name"]
