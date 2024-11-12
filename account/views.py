@@ -3,7 +3,7 @@ from pathlib import Path
 
 import os, jwt, functools
 
-from sqlalchemy import update as sqlalchemy_update, false, and_
+from sqlalchemy import update as sqlalchemy_update
 
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload

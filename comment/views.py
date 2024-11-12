@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from sqlalchemy import update as sqlalchemy_update, delete
@@ -7,7 +6,7 @@ from sqlalchemy.future import select
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, PlainTextResponse
 
-from mail.send import send_mail
+# from mail.send import send_mail
 from account.models import User
 from account.opt_slc import auth
 
@@ -29,6 +28,7 @@ async def cmt_child_create(request, new, id, item):
 
     async with async_session() as session:
         # ..
+        owner = int()
         if request.cookies.get("visited"):
             owner = request.user.user_id
         if request.cookies.get("privileged"):
@@ -44,9 +44,6 @@ async def cmt_child_create(request, new, id, item):
             )
         # ...
         if request.method == "POST":
-
-            print(" owner..", owner)
-            print(" type owner..", type(owner))
             # ..
             form = await request.form()
             # ..
@@ -63,9 +60,9 @@ async def cmt_child_create(request, new, id, item):
             session.add(new)
             await session.commit()
             # ..
-            await send_mail(
-                f"A new object has been created - {owner} - { id }: {opinion}"
-            )
+            # await send_mail(
+            #     f"A new object has been created - {owner} - { id }: {opinion}"
+            # )
             # ..
             response = RedirectResponse(
                 f"/item/{item}/details/{ id }",
@@ -175,7 +172,7 @@ async def cmt_child_update(request, id, cmt_i_id, item):
             await session.execute(query)
             await session.commit()
             # ..
-            await send_mail(f"changes were made at the facility - {i}: {opinion}")
+            # await send_mail(f"changes were made at the facility - {i}: {opinion}")
             # ..
             response = RedirectResponse(
                 f"/item/{item}/details/{ cmt_i_id }",

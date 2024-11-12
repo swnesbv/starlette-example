@@ -7,6 +7,7 @@ from sitemap import sitemap
 routes = [
     Route(
         "/sitemap",
-        sitemap.all_sitemap
+        sitemap.all_sitemap,
+        methods=["GET"]
     ),
 ]
