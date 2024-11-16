@@ -21,6 +21,9 @@ class Item(Base):
     id: Mapped[intpk]
     title: Mapped[chapter]
     description: Mapped[affair]
+    categories: Mapped[str] = mapped_column(
+        MutableList.as_mutable(ARRAY(String(30))), nullable=True
+    )
     file: Mapped[pictures]
     created_at: Mapped[points]
     modified_at: Mapped[points]

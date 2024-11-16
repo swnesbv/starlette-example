@@ -1,6 +1,6 @@
 import shutil
 
-from sqlalchemy import text, or_
+from sqlalchemy import text
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 

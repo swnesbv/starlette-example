@@ -154,13 +154,29 @@ async def on_app_startup() -> None:
                     Item(
                         title="item 01 one",
                         description="description",
+                        categories=["cat_1"],
                         owner=1,
                         created_at=datetime.now(),
                     ),
                     Item(
                         title="item 02 two",
                         description="description 02 two",
+                        categories=["cat_1", "cat_2"],
                         owner=2,
+                        created_at=datetime.now(),
+                    ),
+                    Item(
+                        title="item 03 three",
+                        description="description 03 two",
+                        categories=["cat_1", "cat_2", "cat_3"],
+                        owner=3,
+                        created_at=datetime.now(),
+                    ),
+                    Item(
+                        title="item 04 four",
+                        description="description 03 two",
+                        categories=["cat_2", "cat_3"],
+                        owner=4,
                         created_at=datetime.now(),
                     ),
                     Rent(

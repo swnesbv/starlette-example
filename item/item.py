@@ -1,8 +1,5 @@
+import ast
 
-from pathlib import Path
-from datetime import datetime
-
-from sqlalchemy import update as sqlalchemy_update, delete
 from sqlalchemy.future import select
 
 from starlette.templating import Jinja2Templates
@@ -33,6 +30,33 @@ from .create_update import parent_create, child_img_update
 
 
 templates = Jinja2Templates(directory="templates")
+
+
+async def item_categories(request):
+    # ..
+    template = "/item/categories.html"
+    categories = request.path_params["cts"]
+
+    a = categories.replace("%20", " ")
+    output = ast.literal_eval(a)
+
+    async with async_session() as session:
+        # ..
+        stmt = await session.execute(
+            select(Item)
+            .where(
+                Item.categories.contains(output)
+            )
+        )
+        obj_list = stmt.scalars().all()
+        # ..
+        context = {
+            "request": request,
+            "obj_list": obj_list,
+        }
+        # ..
+        return templates.TemplateResponse(template, context)
+    await engine.dispose()
 
 
 @privileged()
@@ -147,7 +171,9 @@ async def item_list(request):
 
     async with async_session() as session:
         # ..
-        stmt = await session.execute(select(Item).order_by(Item.created_at.desc()))
+        stmt = await session.execute(
+            select(Item).order_by(Item.created_at.desc())
+        )
         obj_list = stmt.scalars().all()
         # ..
         context = {
@@ -170,7 +196,9 @@ async def item_details(request):
         prv = await get_privileged_user(request, session)
         # ..
         if i:
-            stmt = await session.execute(select(Rent).where(Rent.rent_belongs == id))
+            stmt = await session.execute(
+                select(Rent).where(Rent.rent_belongs == id)
+            )
             all_rent = stmt.scalars().all()
             # ..
             stmt = await session.execute(

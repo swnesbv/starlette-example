@@ -63,7 +63,7 @@ def generate_sitemap(url):
 
     xml_content += "</urlset>"
 
-    with open("sitemap.xml", "w", encoding="utf-8") as f:
+    with open("./static/sitemap.xml", "w", encoding="utf-8") as f:
         f.write(xml_content)
     print(" sitemap generated successfully..")
 

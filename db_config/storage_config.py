@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 
 from datetime import datetime
 
-from sqlalchemy import String, Text, DateTime, ForeignKey
+from sqlalchemy import String, DateTime, ForeignKey, Text
 
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, mapped_column

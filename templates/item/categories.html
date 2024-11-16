@@ -6,11 +6,6 @@
 
 <h1 class="lead my-3">list item..</h1>
 
-<div class="card">
-    <h2 class="card-body lead">list item..</h2>
-    <p class="card-header">This is a template for a simple marketing or informational website.</p>
-</div>
-
 <div class="flex_start">
     {% if obj_list %}
     {% for i in obj_list %}
@@ -39,19 +34,11 @@
             </li>
 
             <li class="list-group-item">
+            <span class="badge text-bg-light">categories</span>
             {% if i.categories %}
                 {% for c in i.categories %}
                 <a class="btn btn-outline-primary btn-sm" href="/item/item/categories/{{ c }}">{{ c }}</a>
                 {% endfor %}
-            {% endif %}
-            </li>
-            <li class="list-group-item">
-            {% if i.categories %}
-                <a class="btn btn-outline-primary btn-sm" href="/item/item/categories/{{ i.categories }}">
-                    {% for c in i.categories %}
-                        <span class="me-2">{{ c }}</span>
-                    {% endfor %}
-                </a>
             {% endif %}
             </li>
 
@@ -59,7 +46,7 @@
         </ul>
 
         <div class="card-footer">
-        <a class="btn btn-outline-primary btn-sm" href="/item/item/details/{{ i.id }}">view details &raquo;</a>
+        <a class="btn btn-outline-primary btn-sm" href="/item/item/details/{{ i.id }}" role="button">view details &raquo;</a>
         </div>
 
     </div>
