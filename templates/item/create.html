@@ -5,6 +5,7 @@
 {% block content %}
 
 <h1 class="lead my-3">new item</h1>
+
 <form class="card" method="POST" enctype="multipart/form-data">
     <div class="card-body">
 
@@ -24,6 +25,16 @@
         <textarea class="form-control" name="description" maxlength="333" spellcheck></textarea>
         <div id="help" class="form-text">up to 200 characters</div>
         </div>
+
+        <div id="addinput" class="card-body">
+            <sup class="float-start">add cts</sup>
+        </div>
+        <div class="card-footer action-buttons">
+        <button class="btn btn-sm btn-outline-primary" onclick="addFn(); return false;">
+            add cts
+        </button>
+        </div>
+
     </div>
 
     <div class="card-footer">
@@ -41,8 +52,24 @@
             </button>
         </div>
     </div>
-
 </form>
+
+<script>
+    function addFn() {
+        const divEle = document.getElementById("addinput");
+        const wrapper = document.createElement("div");
+
+        const cFl = document.createElement("input");
+        cFl.setAttribute("type", "text");
+        cFl.setAttribute("name", "categories");
+        cFl.classList.add("w-auto");
+        cFl.classList.add("form-control");
+        cFl.classList.add("mt-2");
+
+        wrapper.appendChild(cFl);
+        divEle.appendChild(wrapper);
+    }
+</script>
 
 <div class="card">
     <div class="card-footer">

@@ -34,29 +34,65 @@ templates = Jinja2Templates(directory="templates")
 
 async def item_categories(request):
     # ..
-    template = "/item/categories.html"
-    categories = request.path_params["cts"]
-
-    a = categories.replace("%20", " ")
-    output = ast.literal_eval(a)
-
     async with async_session() as session:
-        # ..
-        stmt = await session.execute(
-            select(Item)
-            .where(
-                Item.categories.contains(output)
+        if request.method == "GET":
+            # ..
+            template = "/item/categories.html"
+            categories = request.path_params["cts"]
+
+            a = categories.replace("%20", " ")
+            output = ast.literal_eval(a)
+            # ..
+            stmt = await session.execute(
+                select(Item)
+                .where(
+                    Item.categories.contains(output)
+                )
             )
+            obj_list = stmt.scalars().all()
+            # ..
+            stmt = await session.execute(
+                select(Item.categories)
+            )
+            output = stmt.scalars().all()
+
+            obj = []
+            for x in output:
+                if x is not None:
+                    obj.extend(x)
+
+            _ = list(set(obj))
+
+            obj_unique = []
+            # for x in obj:
+            #     if x not in obj_unique:
+            #         obj_unique.append(x)
+            _ = [obj_unique.append(x) for x in obj if x not in obj_unique]
+
+            # ..
+            context = {
+                "request": request,
+                "obj_list": obj_list,
+                "obj_unique": obj_unique,
+            }
+            # ..
+            return templates.TemplateResponse(template, context)
+
+    if request.method == "POST":
+        form = await request.form()
+        on_off = form.getlist("on_off")
+        cts = form.getlist("categories")
+
+        params = []
+        for (c, d) in zip(on_off, cts):
+            if c == "1" :
+                params.append(d)
+        print(" params..", params)
+        print("..")
+        return RedirectResponse(
+            f"/item/item/categories/{params}",
+            status_code=302,
         )
-        obj_list = stmt.scalars().all()
-        # ..
-        context = {
-            "request": request,
-            "obj_list": obj_list,
-        }
-        # ..
-        return templates.TemplateResponse(template, context)
-    await engine.dispose()
 
 
 @privileged()

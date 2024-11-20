@@ -1,14 +1,35 @@
 
 {% extends "base.html" %}
-{% block title %} list item {% endblock %}
+{% block title %} list cts item {% endblock %}
 
 {% block content %}
 
-<h1 class="lead my-3">list item..</h1>
+<h1 class="lead my-3">list categories item..</h1>
+
+{% if obj_unique %}
+<form class="card" method="POST">
+    <div class="card-footer">
+    <span class="badge text-bg-light">select a category</span>
+    {% for c in obj_unique %}
+        {% if c != None %}
+        <sup class="ms-2">{{ c }}</sup>
+        <input type="hidden" name="on_off" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+        <input type="hidden" name="categories" value="{{ c }}" />
+        {% endif %}
+    {% endfor %}
+    </div>
+    <div class="m-2">
+        <button type="submit" class="btn btn-outline-primary btn-sm">
+            submit
+        </button>
+    </div>
+</form>
+{% endif %}
 
 <div class="flex_start">
-    {% if obj_list %}
-    {% for i in obj_list %}
+
+{% if obj_list %}
+{% for i in obj_list %}
     <div class="card mt-2 me-1">
 
         <ul class="card-header list-group list-group-horizontal">
@@ -32,29 +53,28 @@
                 <sup class="float-start">description:</sup>
                 <p>{{ i.description | striptags() | truncate(190, True, '...', 5) | safe }}</p>
             </li>
-
+            {% if i.categories %}
             <li class="list-group-item">
             <span class="badge text-bg-light">categories</span>
-            {% if i.categories %}
                 {% for c in i.categories %}
-                <a class="btn btn-outline-primary btn-sm" href="/item/item/categories/{{ c }}">{{ c }}</a>
+                    {{ c }}
                 {% endfor %}
-            {% endif %}
             </li>
+            {% endif %}
 
             {% include "created_modified.html" %}
         </ul>
 
         <div class="card-footer">
-        <a class="btn btn-outline-primary btn-sm" href="/item/item/details/{{ i.id }}" role="button">view details &raquo;</a>
+        <a class="btn btn-outline-primary btn-sm" href="/item/item/details/{{ i.id }}" >view details &raquo;</a>
         </div>
 
     </div>
-    {% endfor %}
+{% endfor %}
 
-        {% else %}
-        <span class="mt-5">no information available</span>
-    {% endif %}
+    {% else %}
+    <span class="mt-5">no information available</span>
+{% endif %}
 </div>
 
 {% endblock %}

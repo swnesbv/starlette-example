@@ -1,4 +1,3 @@
-
 import jwt
 
 from starlette.authentication import (

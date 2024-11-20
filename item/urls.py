@@ -51,7 +51,7 @@ routes = [
     Route("/list", item.item_list),
     Route("/item/details/{id:int}", item.item_details),
 
-    Route("/item/categories/{cts:str}", item.item_categories),
+    Route("/item/categories/{cts:str}", item.item_categories, methods=["GET", "POST"]),
 
     Route("/create", item.item_create, methods=["GET", "POST"]),
     Route("/update/{id:int}", item.item_update, methods=["GET", "POST"]),

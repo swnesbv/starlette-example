@@ -43,6 +43,8 @@ async def parent_create(request, model, obj, img):
             title = form["title"]
             description = form["description"]
             file = form["file"]
+            cts = form.getlist("categories")
+
             owner = prv.id
             title_exist = await left_right_first(session, Item, Item.title, title)
             owner_exist = await left_right_first(session, Item, Item.owner, owner)
@@ -61,6 +63,7 @@ async def parent_create(request, model, obj, img):
                 new = model()
                 new.title = title
                 new.description = description
+                new.categories = cts
                 new.owner = owner
                 new.created_at = datetime.now()
                 # ..

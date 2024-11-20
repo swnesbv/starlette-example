@@ -38,22 +38,24 @@
                 <p>{{ i.description | striptags() | truncate(190, True, '...', 5) | safe }}</p>
             </li>
 
-            <li class="list-group-item">
             {% if i.categories %}
+            <li class="list-group-item">
+                <sup class="float-start">categories:</sup>
                 {% for c in i.categories %}
-                <a class="btn btn-outline-primary btn-sm" href="/item/item/categories/{{ c }}">{{ c }}</a>
+                <a class="btn btn-outline-primary btn-sm mt-2" href="/item/item/categories/['{{ c }}']">{{ c }}</a>
                 {% endfor %}
-            {% endif %}
             </li>
-            <li class="list-group-item">
+            {% endif %}
+
             {% if i.categories %}
+            <li class="list-group-item">
                 <a class="btn btn-outline-primary btn-sm" href="/item/item/categories/{{ i.categories }}">
                     {% for c in i.categories %}
-                        <span class="me-2">{{ c }}</span>
+                        <span class="me-1">{{ c }},</span>
                     {% endfor %}
                 </a>
-            {% endif %}
             </li>
+            {% endif %}
 
             {% include "created_modified.html" %}
         </ul>

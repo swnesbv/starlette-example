@@ -225,13 +225,11 @@ class DumpService(Base):
 
     id: Mapped[intpk]
     title: Mapped[datetime] = mapped_column(DateTime, unique=True, index=True)
-
     # ...
     owner: Mapped[user_fk]
     dump_s_service_id: Mapped[int] = mapped_column(
         ForeignKey("service_tm.id", ondelete="CASCADE"), nullable=False
     )
-
     # ...
     dump_s_user: Mapped[list["User"]] = relationship(
         back_populates="user_dump_s",
