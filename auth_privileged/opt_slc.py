@@ -46,7 +46,11 @@ async def get_token_privileged(request):
         if not request.cookies.get("privileged"):
             break
         if request.cookies.get("privileged"):
-            payload = jwt.decode(request.cookies.get("privileged"), key, algorithm)
+            payload = None
+            try:
+                payload = jwt.decode(request.cookies.get("privileged"), key, algorithm)
+            except jwt.exceptions.InvalidTokenError:
+                break
             prv_key = payload["prv_key"]
             return prv_key
 

@@ -106,28 +106,32 @@ class ChannelOne(WebSocketEndpoint):
         # now_time = datetime.now().strftime(settings.TIME_FORMAT)
 
         async with async_session() as session:
+            owner = int
+            obj_true = None
+            obj_admin = None
             # ..
             if websocket["prv"].is_authenticated:
                 # ..
                 obj_true = await prv_true(self, websocket, session)
                 obj_admin = await prv_admin_true(self, websocket, session)
+                owner = await get_privileged_user(websocket, session)
             # ..
             if websocket["user"].is_authenticated:
                 # ..
                 obj_true = await user_true(self, websocket, session)
                 obj_admin = await user_admin_true(self, websocket, session)
+                owner = websocket.user.user_id
             # ...
             if message:
                 if obj_true or obj_admin:
                     payload = {
-                        "owner": owner,
+                        "owner": owner.id,
                         "message": message,
                     }
-
                     await ChannelBox.group_send(self.group_name, payload, history=True)
                     # ..
                     new = MessageGroup()
-                    new.owner = owner
+                    new.owner = owner.id
                     new.message = message
                     new.id_group = int(self.group_name)
                     new.created_at = datetime.now()
@@ -138,13 +142,13 @@ class ChannelOne(WebSocketEndpoint):
                 if obj_true or obj_admin:
                     payload = {
                         "file": file,
-                        "owner": owner,
+                        "owner": owner.id,
                     }
                     await ChannelBox.group_send(self.group_name, payload, history=True)
                     # ..
                     new = MessageGroup()
                     new.file = update_file(self.group_name, file)
-                    new.owner = owner
+                    new.owner = owner.id
                     new.id_group = int(self.group_name)
                     new.created_at = datetime.now()
                     # ..
@@ -223,6 +227,9 @@ class OneToOneChat(WebSocketEndpoint):
         # ..
         async with async_session() as session:
             # ..
+            owner = int
+            obj_owner = None
+            obj_community = None
             prv = await get_privileged_user(websocket, session)
             one_one = await group_ref_num(self, session)
             # ..
@@ -342,6 +349,7 @@ class ChannelTwo(WebSocketEndpoint):
 
     async def on_receive(self, websocket, data):
         # ..
+        owner = int
         file = data.get("file")
         message = data.get("message")
         # ..

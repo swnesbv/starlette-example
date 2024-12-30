@@ -27,16 +27,6 @@ class GroupSendStatus(Enum):
 
 
 class Channel:
-    """
-    Channel class - active user channel (adapter to starlette.websockets.WebSocket).
-
-    websocket: WebSocket # Starlette websocket instance (see starlette documentation)
-    expires: int -> Channel ttl in seconds
-    encoding: str [json, text, bytes] -> Encoding of sending data
-    uuid: str -> Unique identifier of channnel
-    created: time, channel creation time
-    """
-
     def __init__(self, websocket: WebSocket, expires: int, encoding: str) -> None:
         assert isinstance(websocket, WebSocket)
         assert isinstance(expires, int)
@@ -72,7 +62,7 @@ class Channel:
                 await self.websocket.send(payload)
             except RuntimeError as error:
                 logging.debug(error)
-        self.created = time.time()  # renew created time for active connecitons
+        self.created = time.time()
 
     async def _is_expired(self) -> None:
         return self.expires + int(self.created) < time.time()
@@ -84,14 +74,6 @@ class Channel:
 
 
 class ChannelBox:
-    """
-    ChannelBox - collection of groups with user channels.
-
-    _GROUPS: dict, dict with groups of active channels ~ key: group_name, val: list of channels
-    _GROUPS_HISTORY: dict, history messages
-    _HISTORY_SIZE: int, history size in bytes (you can redefine it with CHANNEL_BOX_HISTORY_SIZE env variable)
-    """
-
     _GROUPS: dict = {}
     _GROUPS_HISTORY: dict = {}
     _HISTORY_SIZE: int = os.getenv("CHANNEL_BOX_HISTORY_SIZE", 1_048_576)
@@ -109,21 +91,23 @@ class ChannelBox:
 
     @classmethod
     async def channel_remove(cls, group_name: str, channel: Channel) -> Enum:
+        status = {}
         if channel in cls._GROUPS.get(group_name, {}):
             try:
                 del cls._GROUPS[group_name][channel]
                 status = ChannelRemoveStatus.CHANNEL_REMOVED
-            except:
+            except KeyError:
                 status = ChannelRemoveStatus.DOES_NOT_EXIST
 
         if not any(cls._GROUPS.get(group_name, {})):
             try:
                 del cls._GROUPS[group_name]
                 status = ChannelRemoveStatus.GROUP_REMOVED
-            except:
+            except KeyError:
                 status = ChannelRemoveStatus.DOES_NOT_EXIST
 
         await cls._clean_expired()
+        print(" type status..!", status)
         return status
 
     @classmethod
@@ -179,10 +163,10 @@ class ChannelBox:
                 if _is_expired:
                     try:
                         del cls._GROUPS[group_name][channel]
-                    except:
+                    except KeyError:
                         logging.debug("No such channel")
             if not any(cls._GROUPS.get(group_name, {})):
                 try:
                     del cls._GROUPS[group_name]
-                except Exception as e:
+                except KeyError:
                     logging.debug("No such group")

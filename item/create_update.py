@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from datetime import datetime
 
@@ -13,11 +12,12 @@ from db_config.storage_config import engine, async_session
 
 from mail.send import send_mail
 from account.models import User
-from .models import Item
-
-from options_select.opt_slc import for_id, left_right_first
 
 from auth_privileged.opt_slc import get_privileged_user, id_and_owner_prv, owner_prv
+from options_select.opt_slc import for_id, left_right_first
+
+from .models import Item
+
 
 templates = Jinja2Templates(directory="templates")
 
@@ -47,16 +47,10 @@ async def parent_create(request, model, obj, img):
 
             owner = prv.id
             title_exist = await left_right_first(session, Item, Item.title, title)
-            owner_exist = await left_right_first(session, Item, Item.owner, owner)
             if title_exist:
                 raise HTTPException(
                     status_code=HTTP_400_BAD_REQUEST,
-                    detail="title already registered..!",
-                )
-            if owner_exist:
-                raise HTTPException(
-                    status_code=HTTP_400_BAD_REQUEST,
-                    detail="owner already registered..!",
+                    detail=" title already registered..!",
                 )
             # ..
             if file.filename == "":

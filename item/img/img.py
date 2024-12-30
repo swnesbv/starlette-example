@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import os
 import shutil
@@ -7,6 +6,7 @@ from pathlib import Path, PurePosixPath
 from PIL import Image
 
 from starlette.exceptions import HTTPException
+
 from config.settings import BASE_DIR
 
 from auth_privileged.opt_slc import get_privileged_user

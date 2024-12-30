@@ -1,4 +1,3 @@
-
 from starlette.routing import Mount
 
 from item.urls import routes as item_routes
@@ -8,9 +7,7 @@ from comment.urls import routes as comment_routes
 from channel.urls import routes as chat_routes
 from collocutor.urls import routes as collocutor_routes
 from participant.urls import routes as participant_routes
-
 from make_an_appointment.urls import routes as reserve_routes
-
 # ..
 from api_starlette.urls import routes as api_routes
 # ..

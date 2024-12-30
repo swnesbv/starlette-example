@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 import aiofiles
@@ -14,7 +13,7 @@ from config.settings import BASE_DIR
 from db_config.settings import settings
 from db_config.storage_config import engine, async_session
 
-from auth_privileged.opt_slc import privileged, get_privileged_user, sch_sv_user, sch_sv_id
+from auth_privileged.opt_slc import privileged, sch_sv_user, sch_sv_id
 from .models import ScheduleService
 
 

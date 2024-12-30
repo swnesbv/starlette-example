@@ -1,11 +1,9 @@
-from pathlib import Path
 from datetime import datetime
 
 import aiofiles
 import aiofiles.os
 
 from sqlalchemy import insert, delete
-from sqlalchemy.future import select
 
 from aiocsv import AsyncWriter
 

@@ -1,6 +1,6 @@
 import os, jwt, json, string, secrets, functools
 
-from sqlalchemy import and_, or_, not_, true, false
+from sqlalchemy import and_, or_, true, false
 from sqlalchemy.future import select
 
 from participant.models import PersonParticipant

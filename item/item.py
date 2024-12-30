@@ -2,6 +2,8 @@ import ast
 
 from sqlalchemy.future import select
 
+from starlette.exceptions import HTTPException
+from starlette.status import HTTP_400_BAD_REQUEST
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, PlainTextResponse
 
@@ -22,6 +24,7 @@ from auth_privileged.opt_slc import (
     get_privileged_user,
     privileged,
 )
+from options_select.opt_slc import left_right_first
 
 from .models import Item, Service, Rent
 
@@ -143,6 +146,15 @@ async def import_item_csv(request):
 @privileged()
 # ...
 async def item_create(request):
+    if request.method == "GET":
+        async with async_session() as session:
+            prv = await get_privileged_user(request, session)
+            owner_exist = await left_right_first(session, Item, Item.owner, prv.id)
+            if owner_exist:
+                raise HTTPException(
+                    status_code=HTTP_400_BAD_REQUEST,
+                    detail=" owner already registered..!",
+                )
     obj = await parent_create(request, Item, "item", im_item)
     return obj
 
