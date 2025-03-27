@@ -1,4 +1,3 @@
-
 import json
 
 from sqlalchemy import update as sqlalchemy_update, delete, and_
@@ -34,7 +33,7 @@ async def service_create(request):
     form = await request.form()
     belongs = form.get("belongs")
     new = Service()
-
+    # ..
     if belongs is not None:
         new.service_belongs = int(belongs)
     # ..
@@ -48,9 +47,9 @@ async def service_create(request):
 # ...
 async def service_update(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     obj = await child_img_update(
-        request, Service, id, "service", im_service
+        request, Service, id_, "service", im_service
     )
     return obj
 
@@ -59,14 +58,14 @@ async def service_update(request):
 # ...
 async def service_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/service/delete.html"
-
+    # ..
     async with async_session() as session:
 
         if request.method == "GET":
             # ..
-            i = await id_and_owner(session, Service, request.user.user_id, id)
+            i = await id_and_owner(session, Service, request.user.user_id, id_)
             if i:
                 return templates.TemplateResponse(
                     template,
@@ -79,11 +78,11 @@ async def service_delete(request):
         # ...
         if request.method == "POST":
             # ..
-            i = await id_and_owner(session, Service, request.user.user_id, id)
+            i = await id_and_owner(session, Service, request.user.user_id, id_)
             email = await for_id(session, User, i.owner)
             # ..
             await img.del_service(
-                email.email, i.service_belongs, id
+                email.email, i.service_belongs, id_
             )
             # ..
             await session.delete(i)
@@ -100,7 +99,7 @@ async def service_delete(request):
 async def service_list(request):
     # ..
     template = "/service/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         result = await session.execute(
@@ -119,20 +118,20 @@ async def service_list(request):
 
 async def service_details(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/service/details.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        cmt_list = await service_comment(session, id)
+        cmt_list = await service_comment(session, id_)
         # ..
-        i = await for_id(session, Service, id)
+        i = await for_id(session, Service, id_)
         #..
         rsv = await session.execute(
             select(ScheduleService.id)
             .join(ReserveServicerFor.rsf_sch_s)
             .where(
-                ScheduleService.sch_s_service_id == id,
+                ScheduleService.sch_s_service_id == id_,
             )
         )
         rsv_list = rsv.scalars().all()
@@ -142,7 +141,7 @@ async def service_details(request):
             .where(
                 and_(
                     ScheduleService.id.not_in(rsv_list),
-                    ScheduleService.sch_s_service_id == id,
+                    ScheduleService.sch_s_service_id == id_,
                 )
             )
         )

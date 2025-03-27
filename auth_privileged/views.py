@@ -1,10 +1,9 @@
-
 from pathlib import Path
 from datetime import datetime, timedelta
 
 import os, jwt, json, string, secrets, functools
 
-from sqlalchemy import update as sqlalchemy_update, delete, true, and_
+from sqlalchemy import update as sqlalchemy_update, delete
 from sqlalchemy.future import select
 
 from passlib.hash import pbkdf2_sha1
@@ -124,7 +123,7 @@ async def prv_login(request):
 async def prv_logout(request):
     # ..
     template = "/auth/logout.html"
-
+    # ..
     if request.method == "GET":
         return templates.TemplateResponse(
             template, {"request": request}
@@ -154,12 +153,12 @@ async def prv_logout(request):
 async def prv_update(request):
     # ..
     basewidth = 256
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/update.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        i = await left_right_first(session, User, User.id, id)
+        i = await left_right_first(session, User, User.id, id_)
         prv = await get_privileged_user(request, session)
         # ..
         if request.method == "GET":
@@ -184,7 +183,7 @@ async def prv_update(request):
             if file.filename == "":
                 query = (
                     sqlalchemy_update(User)
-                    .where(User.id == id)
+                    .where(User.id == id_)
                     .values(name=name, file=i.file, modified_at=datetime.now())
                     .execution_options(synchronize_session="fetch")
                 )
@@ -197,7 +196,7 @@ async def prv_update(request):
 
                     fle_not = (
                         sqlalchemy_update(User)
-                        .where(User.id == id)
+                        .where(User.id == id_)
                         .values(file=None, modified_at=datetime.now())
                         .execution_options(synchronize_session="fetch")
                     )
@@ -205,18 +204,18 @@ async def prv_update(request):
                     await session.commit()
 
                     return RedirectResponse(
-                        f"/account/details/{id}",
+                        f"/account/details/{ id_ }",
                         status_code=302,
                     )
                 return RedirectResponse(
-                    f"/account/details/{id }",
+                    f"/account/details/{ id_ }",
                     status_code=302,
                 )
             # ..
             email = request.user.email
             file_query = (
                 sqlalchemy_update(User)
-                .where(User.id == id)
+                .where(User.id == id_)
                 .values(
                     name=name,
                     file=await img.user_img_creat(file, email, basewidth),
@@ -229,7 +228,7 @@ async def prv_update(request):
             await session.commit()
 
             return RedirectResponse(
-                f"/account/details/{id}",
+                f"/account/details/{ id_ }",
                 status_code=302,
             )
 
@@ -240,21 +239,21 @@ async def prv_update(request):
 # ...
 async def prv_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/delete.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
             prv = await get_privileged_user(request, session)
-            if prv.id == id:
+            if prv.id == id_:
                 return templates.TemplateResponse(template, {"request": request})
             return PlainTextResponse("You are banned - this is not your account..!")
 
         # ...
         if request.method == "POST":
             # ..
-            i = await left_right_first(session, User, User.id, id)
+            i = await left_right_first(session, User, User.id, id_)
             await img.del_user(i.email)
             # ..
             await session.delete(i)
@@ -275,9 +274,13 @@ async def verify_email(request):
 
 
 async def resend_email(request):
+    # ..
     template = "/auth/resend.html"
+    # ..
     async with async_session() as session:
+        # ..
         if request.method == "POST":
+            # ..
             form = await request.form()
             email = form["email"]
             # ..
@@ -310,8 +313,9 @@ async def resend_email(request):
 @privileged()
 # ...
 async def prv_list(request):
+    # ..
     template = "/auth/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         stmt = await session.execute(select(User))
@@ -331,12 +335,12 @@ async def prv_list(request):
 # ...
 async def prv_detail(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/details.html"
 
     async with async_session() as session:
         # ..
-        i = await left_right_first(session, User, User.id, id)
+        i = await left_right_first(session, User, User.id, id_)
         prv = await get_privileged_user(request, session)
         # ..
         if request.method == "GET":

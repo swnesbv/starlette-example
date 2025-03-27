@@ -5,17 +5,15 @@ import io, os, base64, json
 
 from PIL import Image
 
-from . import views
-
 
 def update_file(user, file):
-
+    # ..
     basewidth = 800
     f_time = datetime.now()
-
+    # ..
     save_path = f"./static/upload/chat/{user}/"
     os.makedirs(save_path, exist_ok=True)
-
+    # ..
     with Image.open(io.BytesIO(base64.decodebytes(bytes(file, "utf-8")))) as fle:
         save_img = (
             f"{save_path}"

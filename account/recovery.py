@@ -1,5 +1,3 @@
-from sqlalchemy.future import select
-
 import jwt
 
 from passlib.hash import pbkdf2_sha1

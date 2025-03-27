@@ -1,5 +1,4 @@
 from sqlalchemy import update as sqlalchemy_update, delete
-from sqlalchemy.future import select
 
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, PlainTextResponse
@@ -42,10 +41,10 @@ async def all_chat(request):
 #...
 async def chat_update(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     id_group = request.path_params["id_group"]
     template = "/chat/update.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -56,12 +55,14 @@ async def chat_update(request):
         #...
         if request.method == "GET":
             if prv:
-                i = await id_and_owner(session, MessageGroup, prv.id, id)
+                i = await id_and_owner(session, MessageGroup, prv.id, id_)
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             # ..
             if request.cookies.get("visited"):
-                i = await id_and_owner(session, MessageGroup, request.user.user_id, id)
+                i = await id_and_owner(
+                    session, MessageGroup, request.user.user_id, id_
+                )
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             return PlainTextResponse("this is not your message..!")
@@ -74,7 +75,7 @@ async def chat_update(request):
             # ..
             query = (
                 sqlalchemy_update(MessageGroup)
-                .where(MessageGroup.id == id)
+                .where(MessageGroup.id == id_)
                 .values(message=message)
                 .execution_options(synchronize_session="fetch")
             )
@@ -92,10 +93,10 @@ async def chat_update(request):
 @auth()
 #...
 async def chat_delete(request):
-
-    id = request.path_params["id"]
+    # ..
+    id_ = request.path_params["id"]
     template = "/chat/delete.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -106,19 +107,21 @@ async def chat_delete(request):
         #...
         if request.method == "GET":
             if prv:
-                i = await id_and_owner(session, MessageGroup, prv.id, id)
+                i = await id_and_owner(session, MessageGroup, prv.id, id_)
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             # ..
             if request.cookies.get("visited"):
-                i = await id_and_owner(session, MessageGroup, request.user.user_id, id)
+                i = await id_and_owner(
+                    session, MessageGroup, request.user.user_id, id_
+                )
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             return PlainTextResponse("this is not your message..!")
         # ...
         if request.method == "POST":
             # ..
-            query = delete(MessageGroup).where(MessageGroup.id == id)
+            query = delete(MessageGroup).where(MessageGroup.id == id_)
             await session.execute(query)
             await session.commit()
             # ..

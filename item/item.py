@@ -38,11 +38,12 @@ templates = Jinja2Templates(directory="templates")
 async def item_categories(request):
     # ..
     async with async_session() as session:
+        # ..
         if request.method == "GET":
             # ..
             template = "/item/categories.html"
             categories = request.path_params["cts"]
-
+            # ..
             a = categories.replace("%20", " ")
             output = ast.literal_eval(a)
             # ..
@@ -117,7 +118,7 @@ async def export_item_csv(request):
 async def import_item_csv(request):
     # ..
     template = "/item/item_import_csv.html"
-
+    # ..
     async with async_session() as session:
         # ..
         if request.method == "GET":
@@ -163,8 +164,8 @@ async def item_create(request):
 # ...
 async def item_update(request):
     # ..
-    id = request.path_params["id"]
-    obj = await child_img_update(request, Item, id, "item", im_item)
+    id_ = request.path_params["id"]
+    obj = await child_img_update(request, Item, id_, "item", im_item)
     return obj
 
 
@@ -172,7 +173,7 @@ async def item_update(request):
 # ...
 async def item_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/item/delete.html"
 
     async with async_session() as session:
@@ -180,7 +181,7 @@ async def item_delete(request):
             # ..
             prv = await get_privileged_user(request, session)
             # ..
-            i = await id_and_owner(session, Item, prv.id, id)
+            i = await id_and_owner(session, Item, prv.id, id_)
             if i:
                 return templates.TemplateResponse(
                     template,
@@ -196,7 +197,7 @@ async def item_delete(request):
             prv = await get_privileged_user(request, session)
             # ..
             i = await id_and_owner(
-                session, Item, prv.id, id
+                session, Item, prv.id, id_
             )
             email = await for_id(session, User, i.owner)
             # ..
@@ -234,23 +235,23 @@ async def item_list(request):
 
 async def item_details(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/item/details.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        i = await for_id(session, Item, id)
-        cmt_list = await item_comment(session, id)
+        i = await for_id(session, Item, id_)
+        cmt_list = await item_comment(session, id_)
         prv = await get_privileged_user(request, session)
         # ..
         if i:
             stmt = await session.execute(
-                select(Rent).where(Rent.rent_belongs == id)
+                select(Rent).where(Rent.rent_belongs == id_)
             )
             all_rent = stmt.scalars().all()
             # ..
             stmt = await session.execute(
-                select(Service).where(Service.service_belongs == id)
+                select(Service).where(Service.service_belongs == id_)
             )
             all_service = stmt.scalars().all()
             # ..
@@ -272,7 +273,7 @@ async def search(request):
     # ..
     query = request.query_params.get("query")
     template = "/item/search.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..

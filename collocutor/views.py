@@ -33,8 +33,10 @@ templates = Jinja2Templates(directory="templates")
 # ...
 async def collocutor_create(request):
     # ..
+    owner = int
+    obj_list = []
     template = "/collocutor/create.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -85,18 +87,20 @@ async def collocutor_create(request):
 # ...
 async def collocutor_add(request):
     # ..
-    id = request.path_params["id"]
-
+    id_ = request.path_params["id"]
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
         # ..
         if prv:
-            obj_prv = await person_collocutor(session, prv.id, id)
+            obj_prv = await person_collocutor(session, prv.id, id_)
             # ...
             if obj_prv:
                 # ..
-                i = await left_right_first(session, PersonCollocutor, PersonCollocutor.id, id)
+                i = await left_right_first(
+                    session, PersonCollocutor, PersonCollocutor.id, id_
+                )
                 i.permission = True
                 i.ref_num = await get_random_string()
                 # ..
@@ -116,11 +120,13 @@ async def collocutor_add(request):
                     status_code=302,
                 )
         if request.cookies.get("visited"):
-            obj_user = await person_collocutor(session, request.user.user_id, id)
+            obj_user = await person_collocutor(session, request.user.user_id, id_)
             # ...
             if obj_user:
                 # ..
-                i = await left_right_first(session, PersonCollocutor, PersonCollocutor.id, id)
+                i = await left_right_first(
+                    session, PersonCollocutor, PersonCollocutor.id, id_
+                )
                 i.permission = True
                 i.ref_num = await get_random_string()
                 # ..
@@ -146,21 +152,23 @@ async def collocutor_add(request):
 # ...
 async def collocutor_delete(request):
     # ..
-    id = request.path_params["id"]
-
+    i_prv = int
+    i_user = int
+    id_ = request.path_params["id"]
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
         # ..
         if prv:
-            obj_prv = await person_collocutor(session, prv.id, id)
+            i_prv = await person_collocutor(session, prv.id, id_)
         # ..
         if request.cookies.get("visited"):
-            obj_user = await person_collocutor(session, request.user.user_id, id)
+            i_user = await person_collocutor(session, request.user.user_id, id_)
         #...
-        if obj_prv or obj_user:
+        if i_prv or i_user:
             # ..
-            query = delete(PersonCollocutor).where(PersonCollocutor.id == id)
+            query = delete(PersonCollocutor).where(PersonCollocutor.id == id_)
             # ..
             await session.execute(query)
             await session.commit()
@@ -177,7 +185,7 @@ async def collocutor_delete(request):
 async def call_owner(request):
     # ..
     template = "/collocutor/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -206,7 +214,7 @@ async def call_owner(request):
 async def call_to_user(request):
     # ..
     template = "/collocutor/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)

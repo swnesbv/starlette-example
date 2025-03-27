@@ -26,7 +26,7 @@ async def parent_create(request, model, obj, img):
     # ..
     basewidth = 800
     template = f"/{obj}/create.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -142,13 +142,13 @@ async def child_create(
     await engine.dispose()
 
 
-async def child_update(request, context, model, id, form, item):
+async def child_update(request, context, model, id_, form, item):
     # ..
     template = f"/{item}/update.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        i = await id_and_owner_prv(request, session, model, id)
+        i = await id_and_owner_prv(request, session, model, id_)
         # ..
         if request.method == "GET":
             if i:
@@ -161,7 +161,7 @@ async def child_update(request, context, model, id, form, item):
             # ..
             query = (
                 sqlalchemy_update(model)
-                .where(model.id == id)
+                .where(model.id == id_)
                 .values(
                     **form,
                     modified_at=datetime.now(),
@@ -175,7 +175,7 @@ async def child_update(request, context, model, id, form, item):
             await send_mail(f"changes were made at the facility - {i}: {i.title}")
             # ..
             response = RedirectResponse(
-                f"/item/{item}/details/{ id }",
+                f"/item/{item}/details/{ id_ }",
                 status_code=302,
             )
             return response
@@ -256,14 +256,14 @@ async def child_img_create(
     await engine.dispose()
 
 
-async def child_img_update(request, model, id, item, img):
+async def child_img_update(request, model, id_, item, img):
     # ..
     basewidth = 800
     template = f"/{item}/update.html"
 
     async with async_session() as session:
         # ..
-        i = await id_and_owner_prv(request, session, model, id)
+        i = await id_and_owner_prv(request, session, model, id_)
         # ..
         if request.method == "GET":
             if i:
@@ -286,7 +286,7 @@ async def child_img_update(request, model, id, item, img):
             if file.filename == "":
                 query = (
                     sqlalchemy_update(model)
-                    .where(model.id == id)
+                    .where(model.id == id_)
                     .values(
                         title=title,
                         description=description,
@@ -304,7 +304,7 @@ async def child_img_update(request, model, id, item, img):
 
                     fle_not = (
                         sqlalchemy_update(model)
-                        .where(model.id == id)
+                        .where(model.id == id_)
                         .values(file=None, modified_at=datetime.now())
                         .execution_options(synchronize_session="fetch")
                     )
@@ -316,22 +316,22 @@ async def child_img_update(request, model, id, item, img):
                     )
                     # ..
                     return RedirectResponse(
-                        f"/item/{item}/details/{id}",
+                        f"/item/{item}/details/{ id_ }",
                         status_code=302,
                     )
                 return RedirectResponse(
-                    f"/item/{item}/details/{id}",
+                    f"/item/{item}/details/{ id_ }",
                     status_code=302,
                 )
             # ..
             email = await for_id(session, User, i.owner)
             file_query = (
                 sqlalchemy_update(model)
-                .where(model.id == id)
+                .where(model.id == id_)
                 .values(
                     title=title,
                     description=description,
-                    file=await img.im_creat(file, email.email, id, basewidth),
+                    file=await img.im_creat(file, email.email, id_, basewidth),
                     modified_at=datetime.now(),
                 )
                 .execution_options(synchronize_session="fetch")
@@ -343,7 +343,7 @@ async def child_img_update(request, model, id, item, img):
             await send_mail(f"changes were made at the facility - {i}: {i.title}")
             # ..
             return RedirectResponse(
-                f"/item/{item}/details/{id}",
+                f"/item/{item}/details/{ id_ }",
                 status_code=302,
             )
     await engine.dispose()

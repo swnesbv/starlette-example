@@ -118,23 +118,23 @@ async def user_img_creat(file, email, basewidth):
     obj = await item_img(name, save_path, file, basewidth)
     return obj
 
-async def item_img_creat(file, email, id, basewidth):
+async def item_img_creat(file, email, id_, basewidth):
     name = datetime.now().strftime("%d-%m-%y-%H-%M")
-    save_path = f"./static/upload/{email}/item/{id}_tm"
+    save_path = f"./static/upload/{ email }/item/{ id_ }_tm"
     obj = await item_img(name, save_path, file, basewidth)
     return obj
 
 
-async def rent_img_creat(file, email, tm_id, id, basewidth):
+async def rent_img_creat(file, email, tm_id, id_, basewidth):
     name = datetime.now().strftime("%d-%m-%y-%H-%M")
-    save_path = f"./static/upload/{email}/item/{tm_id}_tm/rent/{id}"
+    save_path = f"./static/upload/{ email }/item/{ tm_id }_tm/rent/{ id_ }"
     obj = await item_img(name, save_path, file, basewidth)
     return obj
 
 
-async def service_img_creat(file, email, tm_id, id, basewidth):
+async def service_img_creat(file, email, tm_id, id_, basewidth):
     name = datetime.now().strftime("%d-%m-%y-%H-%M")
-    save_path = f"./static/upload/{email}/item/{tm_id}_tm/service/{id}"
+    save_path = f"./static/upload/{ email }/item/{ tm_id }_tm/service/{ id_ }"
     obj = await item_img(name, save_path, file, basewidth)
     return obj
 
@@ -150,31 +150,31 @@ async def del_user(email):
             shutil.rmtree(i)
 
 
-async def del_tm(email, id):
+async def del_tm(email, id_):
     # ..
     directory = (
         BASE_DIR
-        / f"static/upload/{email}/item/{id}_tm"
+        / f"static/upload/{ email }/item/{ id_ }_tm"
     )
     if Path(directory).exists():
         shutil.rmtree(directory)
 
 
-async def del_rent(email, tm_id, id):
+async def del_rent(email, tm_id, id_):
     # ..
     directory = (
         BASE_DIR
-        / f"static/upload/{email}/item/{tm_id}_tm/rent/{id}"
+        / f"static/upload/{ email }/item/{ tm_id }_tm/rent/{ id_ }"
     )
     if Path(directory).exists():
         shutil.rmtree(directory)
 
 
-async def del_service(email, tm_id, id):
+async def del_service(email, tm_id, id_):
     # ..
     directory = (
         BASE_DIR
-        / f"static/upload/{email}/item/{tm_id}_tm/service/{id}"
+        / f"static/upload/{ email }/item/{ tm_id }_tm/service/{ id_ }"
     )
     if Path(directory).exists():
         shutil.rmtree(directory)

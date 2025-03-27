@@ -162,12 +162,12 @@ async def user_login(request):
 async def user_update(request):
     # ..
     basewidth = 256
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/update.html"
 
     async with async_session() as session:
         # ..
-        i = await left_right_first(session, User, User.id, id)
+        i = await left_right_first(session, User, User.id, id_)
         # ..
         if request.method == "GET":
             if request.user.user_id == i.id:
@@ -191,7 +191,7 @@ async def user_update(request):
             if file.filename == "":
                 query = (
                     sqlalchemy_update(User)
-                    .where(User.id == id)
+                    .where(User.id == id_)
                     .values(name=name, file=i.file, modified_at=datetime.now())
                     .execution_options(synchronize_session="fetch")
                 )
@@ -204,7 +204,7 @@ async def user_update(request):
 
                     fle_not = (
                         sqlalchemy_update(User)
-                        .where(User.id == id)
+                        .where(User.id == id_)
                         .values(file=None, modified_at=datetime.now())
                         .execution_options(synchronize_session="fetch")
                     )
@@ -223,7 +223,7 @@ async def user_update(request):
             email = request.user.email
             file_query = (
                 sqlalchemy_update(User)
-                .where(User.id == id)
+                .where(User.id == id_)
                 .values(
                     name=name,
                     file=await img.user_img_creat(file, email, basewidth),
@@ -236,7 +236,7 @@ async def user_update(request):
             await session.commit()
 
             return RedirectResponse(
-                f"/account/details/{id}",
+                f"/account/details/{ id_ }",
                 status_code=302,
             )
 
@@ -247,20 +247,20 @@ async def user_update(request):
 # ...
 async def user_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/delete.html"
 
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            if request.user.user_id == id:
+            if request.user.user_id == id_:
                 return templates.TemplateResponse(template, {"request": request})
             return PlainTextResponse("You are banned - this is not your account..!")
 
         # ...
         if request.method == "POST":
             # ..
-            i = await left_right_first(session, User, User.id, id)
+            i = await left_right_first(session, User, User.id, id_)
             await img.del_user(i.email)
             # ..
             await session.delete(i)
@@ -279,7 +279,7 @@ async def user_delete(request):
 async def user_logout(request):
     # ..
     template = "/auth/logout.html"
-
+    # ..
     if request.method == "GET":
         return templates.TemplateResponse(template, {"request": request})
     if request.method == "POST":
@@ -296,7 +296,9 @@ async def verify_email(request):
 
 
 async def resend_email(request):
+    # ..
     template = "/auth/resend.html"
+    # ..
     async with async_session() as session:
         if request.method == "POST":
             form = await request.form()
@@ -331,7 +333,7 @@ async def resend_email(request):
 async def user_list(request):
     # ..
     template = "/auth/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         stmt = await session.execute(
@@ -367,12 +369,12 @@ async def user_list(request):
 
 async def user_detail(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/auth/details.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        i = await left_right_first(session, User, User.id, id)
+        i = await left_right_first(session, User, User.id, id_)
         prv = await get_privileged_user(request, session)
         # ..
         if request.method == "GET":

@@ -54,9 +54,8 @@ async def create_sch_rent(request):
 # ...
 async def update_sch_rent(request):
     # ..
-    id = request.path_params["id"]
-    # ..
     context = {}
+    id_ = request.path_params["id"]
     # ..
     form = await request.form()
     # ..
@@ -73,7 +72,7 @@ async def update_sch_rent(request):
         "description": description,
         }
         # ..
-    obj = await child_update(request, context, ScheduleRent, id, form, "schedulerent")
+    obj = await child_update(request, context, ScheduleRent, id_, form, "schedulerent")
     return obj
 
 
@@ -81,13 +80,13 @@ async def update_sch_rent(request):
 # ...
 async def schedule_sch_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/schedulerent/delete.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            i = await id_and_owner_prv(request, session, ScheduleRent, id)
+            i = await id_and_owner_prv(request, session, ScheduleRent, id_)
             if i:
                 return templates.TemplateResponse(
                     template,
@@ -100,7 +99,7 @@ async def schedule_sch_delete(request):
         # ...
         if request.method == "POST":
             # ..
-            query = delete(ScheduleRent).where(ScheduleRent.id == id)
+            query = delete(ScheduleRent).where(ScheduleRent.id == id_)
             # ..
             await session.execute(query)
             await session.commit()
@@ -118,7 +117,7 @@ async def schedule_sch_delete(request):
 async def list_sch_rent(request):
     # ..
     template = "/schedulerent/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         obj_list = await get_owner_prv(request, session, ScheduleRent)
@@ -135,13 +134,14 @@ async def list_sch_rent(request):
 # ...
 async def details_sch_rent(request):
     # ..
-    id = request.path_params["id"]
+    context = {}
+    id_ = request.path_params["id"]
     template = "/schedulerent/details.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            i = await id_and_owner_prv(request, session, ScheduleRent, id)
+            i = await id_and_owner_prv(request, session, ScheduleRent, id_)
             if i:
                 # ..
                 obj_list = await get_owner_prv(request, session, ScheduleRent)
@@ -167,4 +167,3 @@ async def details_sch_rent(request):
                 }
             return templates.TemplateResponse(template, context)
     await engine.dispose()
-

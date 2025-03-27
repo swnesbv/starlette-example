@@ -1,11 +1,10 @@
 import os, jwt, json, string, secrets, functools
 
-from sqlalchemy import and_, or_, not_, true, false
+from sqlalchemy import and_, true, false
 from sqlalchemy.future import select
 
 from account.models import User
 
-from auth_privileged.opt_slc import get_privileged_user
 from .models import PersonCollocutor
 
 
@@ -30,6 +29,7 @@ async def stop_double(session, obj):
         )
     )
     obj_list = stmt.scalars().all()
+    print(" type obj_list..", type(obj_list))
     return obj_list
 
 
@@ -87,11 +87,11 @@ async def to_user_false(session, obj):
     return result
 
 
-async def person_collocutor(session, obj, id):
+async def person_collocutor(session, obj, id_):
     stmt = await session.execute(
         select(PersonCollocutor).where(
             and_(
-                PersonCollocutor.id == id,
+                PersonCollocutor.id == id_,
                 PersonCollocutor.community == obj
             )
         )

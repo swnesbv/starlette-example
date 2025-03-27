@@ -1,15 +1,13 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy.future import select
-
 import jwt
 
 from starlette.exceptions import HTTPException
 from starlette.responses import RedirectResponse
 
+from db_config.settings import settings
 from db_config.storage_config import engine, async_session
 from options_select.opt_slc import left_right_first
-from db_config.settings import settings
 
 from .models import User
 

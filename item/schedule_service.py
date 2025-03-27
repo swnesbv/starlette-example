@@ -2,7 +2,7 @@ from datetime import datetime
 
 import json
 
-from sqlalchemy import update as sqlalchemy_update, delete, and_
+from sqlalchemy import update as sqlalchemy_update, delete
 from sqlalchemy.future import select
 
 from starlette.templating import Jinja2Templates
@@ -13,7 +13,7 @@ from json2html import json2html
 from db_config.settings import settings
 from db_config.storage_config import engine, async_session
 
-from mail.send import send_mail
+# from mail.send import send_mail
 
 from options_select.opt_slc import (
     for_id,
@@ -22,7 +22,6 @@ from options_select.opt_slc import (
 
 from auth_privileged.opt_slc import (
     privileged,
-    get_owner_prv,
     id_and_owner_prv,
     get_privileged_user,
     sch_sv_service_owner_id,
@@ -39,7 +38,7 @@ templates = Jinja2Templates(directory="templates")
 async def list_sch_service(request):
     # ..
     template = "/scheduleservice/list_service.html"
-
+    # ..
     async with async_session() as session:
         # ..
         obj_count = await all_total(session, Service)
@@ -65,12 +64,12 @@ async def list_sch_service(request):
 # ...
 async def list_sch_service_id(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/scheduleservice/list_service_id.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        obj_list = await sch_sv_service_owner_id(request, session, id)
+        obj_list = await sch_sv_service_owner_id(request, session, id_)
         # ..
         context = {
             "request": request,
@@ -84,14 +83,15 @@ async def list_sch_service_id(request):
 # ...
 async def details_sch_service(request):
     # ..
-    id = request.path_params["id"]
+    context = {}
+    id_ = request.path_params["id"]
     service = request.path_params["service"]
     template = "/scheduleservice/details_service.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            i = await id_and_owner_prv(request, session, ScheduleService, id)
+            i = await id_and_owner_prv(request, session, ScheduleService, id_)
             if i:
                 # ..
                 obj_list = sch_sv_service_owner_id(request, session, service)
@@ -128,16 +128,17 @@ async def details_sch_service(request):
 # ...
 async def details(request):
     # ..
-    id = request.path_params["id"]
+    context = {}
+    id_ = request.path_params["id"]
     template = "/scheduleservice/details.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            obj = await id_and_owner_prv(request, session, ScheduleService, id)
+            obj = await id_and_owner_prv(request, session, ScheduleService, id_)
             if obj:
                 # ..
-                i = await for_id(session, ScheduleService, id)
+                i = await for_id(session, ScheduleService, id_)
                 # ..
                 context = {
                     "request": request,
@@ -186,9 +187,8 @@ async def create_sch_service(request):
 # ...
 async def update_sch_service(request):
     # ..
-    id = request.path_params["id"]
-    # ..
     context = {}
+    id_ = request.path_params["id"]
     # ..
     form = await request.form()
     # ..
@@ -208,7 +208,7 @@ async def update_sch_service(request):
         }
         # ..
     obj = await child_update(
-        request, context, ScheduleService, id, form, "scheduleservice"
+        request, context, ScheduleService, id_, form, "scheduleservice"
     )
     return obj
 
@@ -217,13 +217,13 @@ async def update_sch_service(request):
 # ...
 async def schedule_sch_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/scheduleservice/delete.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            i = await id_and_owner_prv(request, session, ScheduleService, id)
+            i = await id_and_owner_prv(request, session, ScheduleService, id_)
             if i:
                 return templates.TemplateResponse(
                     template,
@@ -236,7 +236,7 @@ async def schedule_sch_delete(request):
         # ...
         if request.method == "POST":
             # ..
-            query = delete(ScheduleService).where(ScheduleService.id == id)
+            query = delete(ScheduleService).where(ScheduleService.id == id_)
             await session.execute(query)
             await session.commit()
             # ..

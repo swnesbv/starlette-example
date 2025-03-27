@@ -1,4 +1,3 @@
-
 import jwt
 
 from passlib.hash import pbkdf2_sha1
@@ -19,12 +18,10 @@ from .token import encode_reset_password, decode_reset_password
 templates = Jinja2Templates(directory="templates")
 
 
-async def reset_password(
-    request
-):
-
+async def reset_password(request):
+    # ..
     template = "/auth/reset-password.html"
-
+    # ..
     async with async_session() as session:
 
         if request.method == "POST":
@@ -53,9 +50,7 @@ async def reset_password(
     await engine.dispose()
 
 
-async def reset_password_verification(
-    request
-):
+async def reset_password_verification(request):
 
     async with async_session() as session:
 
@@ -69,7 +64,6 @@ async def reset_password_verification(
                 "Недействительный пользователь..! Пожалуйста, создайте учетную запись",
             )
 
-
         form = await request.form()
         user.password = pbkdf2_sha1.hash(form["password"])
         await session.commit()
@@ -77,10 +71,10 @@ async def reset_password_verification(
     await engine.dispose()
 
 
-async def reset_password_confirm(
-    request
-):
+async def reset_password_confirm(request):
+    # ..
     template = "auth/reset-password-confirm.html"
+    # ..
     if request.method == "GET":
         return templates.TemplateResponse(
             template,

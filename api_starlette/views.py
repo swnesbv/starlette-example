@@ -31,7 +31,7 @@ async def item_create(request):
     # ..
     basewidth = 800
     template = "/item/create.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             response = templates.TemplateResponse(
@@ -105,12 +105,12 @@ async def item_create(request):
 async def item_update(request):
     # ..
     basewidth = 800
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/item/update.html"
 
     async with async_session() as session:
         # ..
-        i = await id_and_owner(session, Item, request.user.user_id, id)
+        i = await id_and_owner(session, Item, request.user.user_id, id_)
         # ..
         context = {
             "request": request,
@@ -141,7 +141,7 @@ async def item_update(request):
                 print(str(FormUpdate.model_dump(obj_in)))
                 query = (
                     sqlalchemy_update(Item)
-                    .where(Item.id == id)
+                    .where(Item.id == id_)
                     .values(obj_in.__dict__)
                     .execution_options(synchronize_session="fetch")
                 )
@@ -154,7 +154,7 @@ async def item_update(request):
 
                     fle_not = (
                         sqlalchemy_update(Item)
-                        .where(Item.id == id)
+                        .where(Item.id == id_)
                         .values(file=None, modified_at=datetime.now())
                         .execution_options(synchronize_session="fetch")
                     )
@@ -162,11 +162,11 @@ async def item_update(request):
                     await session.commit()
                     # ..
                     return RedirectResponse(
-                        f"/item/item/details/{id}",
+                        f"/item/item/details/{ id_ }",
                         status_code=302,
                     )
                 return RedirectResponse(
-                    f"/item/item/details/{id}",
+                    f"/item/item/details/{ id_ }",
                     status_code=302,
                 )
             # ..
@@ -178,12 +178,12 @@ async def item_update(request):
             )
             file_query = (
                 sqlalchemy_update(Item)
-                .where(Item.id == id)
+                .where(Item.id == id_)
                 .values(
                     obj_in.__dict__,
                 )
                 .values(
-                    file=await img.item_img_creat(file, email.email, id, basewidth),
+                    file=await img.item_img_creat(file, email.email, id_, basewidth),
                 )
                 .execution_options(synchronize_session="fetch")
             )
@@ -259,9 +259,7 @@ async def item_list(request):
 #     await engine.dispose()
 
 
-# async def item_list(
-#     request
-# ):
+# async def item_list():
 #     async with async_session() as session:
 #         #..
 #         stmt = await session.execute(select(Item))
@@ -287,11 +285,11 @@ async def item_list(request):
 
 async def item_details(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     # ..
     async with async_session() as session:
         # ..
-        i = await left_right_first(session, Item, Item.id, id)
+        i = await left_right_first(session, Item, Item.id, id_)
         # ..
         obj = ListItem(
             id=i.id,
@@ -307,10 +305,10 @@ async def item_details(request):
 
 
 # async def item_details(request):
-#     id = request.path_params["id"]
+#     id_ = request.path_params["id"]
 #     async with async_session() as session:
 #         # ..
-#         stmt = await session.execute(select(Item).where(Item.id == id))
+#         stmt = await session.execute(select(Item).where(Item.id == id_))
 #         i = stmt.scalars().first()
 #         # ..
 #         obj = {
@@ -326,7 +324,7 @@ async def item_details(request):
 #     await engine.dispose()
 
 
-async def schedule_rent_list(request):
+async def schedule_rent_list():
     async with async_session() as session:
         # ..
         stmt = await session.execute(
@@ -349,7 +347,7 @@ async def schedule_rent_list(request):
     await engine.dispose()
 
 
-async def schedule_service_list(request):
+async def schedule_service_list():
     async with async_session() as session:
         # ..
         stmt = await session.execute(

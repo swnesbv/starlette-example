@@ -62,10 +62,10 @@ async def one_one_details(request):
 #...
 async def one_one_update(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     ref_num = request.path_params["ref_num"]
     template = "/one_one/update.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -76,12 +76,14 @@ async def one_one_update(request):
         #...
         if request.method == "GET":
             if prv:
-                i = await id_and_owner(session, OneOneChat, prv.id, id)
+                i = await id_and_owner(session, OneOneChat, prv.id, id_)
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             # ..
             if request.cookies.get("visited"):
-                i = await id_and_owner(session, OneOneChat, request.user.user_id, id)
+                i = await id_and_owner(
+                    session, OneOneChat, request.user.user_id, id_
+                )
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             return PlainTextResponse("this is not your message..!")
@@ -94,7 +96,7 @@ async def one_one_update(request):
             # ..
             query = (
                 sqlalchemy_update(OneOneChat)
-                .where(OneOneChat.id == id)
+                .where(OneOneChat.id == id_)
                 .values(message=message)
                 .execution_options(synchronize_session="fetch")
             )
@@ -112,10 +114,10 @@ async def one_one_update(request):
 @auth()
 # ..
 async def one_one_delete(request):
-
-    id = request.path_params["id"]
+    # ..
+    id_ = request.path_params["id"]
     template = "/one_one/delete.html"
-
+    # ..
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
@@ -126,19 +128,21 @@ async def one_one_delete(request):
         # ..
         if request.method == "GET":
             if prv:
-                i = await id_and_owner(session, OneOneChat, prv.id, id)
+                i = await id_and_owner(session, OneOneChat, prv.id, id_)
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             # ..
             if request.cookies.get("visited"):
-                i = await id_and_owner(session, OneOneChat, request.user.user_id, id)
+                i = await id_and_owner(
+                    session, OneOneChat, request.user.user_id, id_
+                )
                 context["i"] = i
                 return templates.TemplateResponse(template, context)
             return PlainTextResponse("this is not your message..!")
 
         if request.method == "POST":
             # ..
-            query = delete(OneOneChat).where(OneOneChat.id == id)
+            query = delete(OneOneChat).where(OneOneChat.id == id_)
             await session.execute(query)
             await session.commit()
             # ..

@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 
 import jwt
@@ -14,17 +13,15 @@ from db_config.settings import settings
 
 from options_select.opt_slc import left_right_first
 
-
 key = settings.SECRET_KEY
 algorithm = settings.JWT_ALGORITHM
 EMAIL_TOKEN_EXPIRY_MINUTES = settings.EMAIL_TOKEN_EXPIRY_MINUTES
 
 
-async def verify_decode(
-    request
-):
+async def verify_decode(request):
+    # ..
     payload = request.query_params["token"]
-
+    # ..
     try:
         token = jwt.decode(
             payload,
@@ -48,9 +45,8 @@ async def verify_decode(
         ) from exc
 
 
-async def mail_verify(
-    request
-):
+async def mail_verify(request):
+    # ..
     async with async_session() as session:
 
         email = await verify_decode(request)
@@ -82,7 +78,7 @@ async def mail_verify(
 # ...
 
 async def encode_reset_password(email):
-
+    # ..
     payload = {
         "email": email,
         "exp": datetime.utcnow()
@@ -98,11 +94,10 @@ async def encode_reset_password(email):
     return token
 
 
-async def decode_reset_password(
-    request
-):
+async def decode_reset_password(request):
+    # ..
     token = request.query_params["token"]
-
+    # ..
     try:
         payload = jwt.decode(
             token,

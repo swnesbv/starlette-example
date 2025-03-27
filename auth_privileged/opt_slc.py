@@ -42,6 +42,7 @@ async def token_privileged(request, session, model):
 
 # ...
 async def get_token_privileged(request):
+    # ..
     while True:
         if not request.cookies.get("privileged"):
             break
@@ -55,6 +56,7 @@ async def get_token_privileged(request):
             return prv_key
 
 async def get_privileged(request, session):
+    # ..
     while True:
         token = await get_token_privileged(request)
         if not token:
@@ -68,6 +70,7 @@ async def get_privileged(request, session):
             return result
 
 async def get_privileged_user(request, session):
+    # ..
     while True:
         prv = await get_privileged(request, session)
         if not prv:
@@ -80,6 +83,7 @@ async def get_privileged_user(request, session):
             return result
 
 async def get_owner_prv(request, session, model):
+    # ..
     while True:
         prv = await get_privileged_user(request, session)
         if not prv:
@@ -107,12 +111,12 @@ def privileged():
 # ...
 
 
-async def id_and_owner_prv(request, session, model, id):
+async def id_and_owner_prv(request, session, model, id_):
     prv = await get_privileged_user(request, session)
     stmt = await session.execute(
         select(model).where(
             and_(
-                model.id == id,
+                model.id == id_,
                 model.owner == prv.id,
             )
         )
@@ -130,13 +134,13 @@ async def owner_prv(session, model, prv):
 
 
 # ..
-async def sch_sv_service_owner_id(request, session, id):
+async def sch_sv_service_owner_id(request, session, id_):
     prv = await get_privileged_user(request, session)
     stmt = await session.execute(
         select(ScheduleService)
         .where(
             and_(
-                ScheduleService.sch_s_service_id == id,
+                ScheduleService.sch_s_service_id == id_,
                 ScheduleService.owner == prv.id,
             )
         )
@@ -145,13 +149,13 @@ async def sch_sv_service_owner_id(request, session, id):
     result = stmt.scalars().all()
     return result
 
-async def sch_sv_id(request, session, id):
+async def sch_sv_id(request, session, id_):
     prv = await get_privileged_user(request, session)
     stmt = await session.execute(
         select(ScheduleService.id)
         .where(
             and_(
-                ScheduleService.sch_s_service_id == id,
+                ScheduleService.sch_s_service_id == id_,
                 ScheduleService.owner == prv.id,
             )
         )
@@ -160,12 +164,12 @@ async def sch_sv_id(request, session, id):
     result = stmt.scalars().all()
     return result
 
-async def sch_sv_user(request, session, id):
+async def sch_sv_user(request, session, id_):
     prv = await get_privileged_user(request, session)
     stmt = await session.execute(
         select(ScheduleService).where(
             and_(
-                ScheduleService.sch_s_service_id == id,
+                ScheduleService.sch_s_service_id == id_,
                 ScheduleService.owner == prv.id,
             )
         )
@@ -175,13 +179,13 @@ async def sch_sv_user(request, session, id):
 # ..
 
 
-async def dump_schedule_service(request, session, id):
+async def dump_schedule_service(request, session, id_):
     prv = await get_privileged_user(request, session)
     stmt = await session.execute(
         select(DumpService)
         .where(
             and_(
-                DumpService.dump_s_service_id == id,
+                DumpService.dump_s_service_id == id_,
                 DumpService.owner == prv.id,
             )
         )

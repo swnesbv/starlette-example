@@ -31,7 +31,7 @@ async def rent_create(request):
     form = await request.form()
     belongs = form.get("belongs")
     new = Rent()
-
+    # ..
     if belongs is not None:
         new.rent_belongs = int(belongs)
     # ..
@@ -45,9 +45,10 @@ async def rent_create(request):
 # ...
 async def rent_update(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
+    # ..
     obj = await child_img_update(
-        request, Rent, id, "service", im_rent
+        request, Rent, id_, "service", im_rent
     )
     return obj
 
@@ -56,13 +57,13 @@ async def rent_update(request):
 # ...
 async def rent_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/rent/delete.html"
-
+    # ..
     async with async_session() as session:
         if request.method == "GET":
             # ..
-            i = await id_and_owner_prv(request, session, Rent, id)
+            i = await id_and_owner_prv(request, session, Rent, id_)
             # ..
             if i:
                 return templates.TemplateResponse(
@@ -73,10 +74,10 @@ async def rent_delete(request):
         # ...
         if request.method == "POST":
             # ..
-            i = await id_and_owner_prv(request, session, Rent, id)
+            i = await id_and_owner_prv(request, session, Rent, id_)
             email = await for_id(session, User, i.owner)
             # ..
-            await img.del_rent(email.email, i.rent_belongs, id)
+            await img.del_rent(email.email, i.rent_belongs, id_)
             # ..
             await session.delete(i)
             await session.commit()
@@ -92,7 +93,7 @@ async def rent_delete(request):
 async def rent_list(request):
     # ..
     template = "/rent/list.html"
-
+    # ..
     async with async_session() as session:
         # ..
         stmt = await session.execute(select(Rent).order_by(Rent.created_at.desc()))
@@ -109,7 +110,7 @@ async def rent_list(request):
 async def rent_list_prv(request):
     # ..
     template = "/rent/list_prv.html"
-
+    # ..
     async with async_session() as session:
         # ..
         i = await token_privileged(request, session, Rent)
@@ -125,18 +126,18 @@ async def rent_list_prv(request):
 
 async def rent_details(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/rent/details.html"
-
+    # ..
     async with async_session() as session:
         # ..
-        cmt_list = await rent_comment(session, id)
+        cmt_list = await rent_comment(session, id_)
         # ..
-        i = await for_id(session, Rent, id)
+        i = await for_id(session, Rent, id_)
         # ..
         stmt = await session.execute(
             select(ScheduleRent)
-            .where(ScheduleRent.sch_r_rent_id == id)
+            .where(ScheduleRent.sch_r_rent_id == id_)
             .order_by(ScheduleRent.id.desc())
         )
         obj_list = stmt.scalars().all()

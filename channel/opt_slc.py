@@ -62,13 +62,13 @@ async def user_admin_true(self, websocket, session):
     return result
 
 
-async def in_obj_participant(session, obj, id):
+async def in_obj_participant(session, obj, id_):
     stmt = await session.execute(
         select(PersonParticipant).where(
             and_(
                 PersonParticipant.owner == obj,
                 PersonParticipant.permission == false(),
-                PersonParticipant.community == id,
+                PersonParticipant.community == id_,
             )
         )
     )
@@ -76,14 +76,14 @@ async def in_obj_participant(session, obj, id):
     return result
 
 
-async def in_obj_accepted(session, obj, id):
+async def in_obj_accepted(session, obj, id_):
     stmt = await session.execute(
         select(PersonParticipant).where(
             and_(
                 PersonParticipant.owner == obj,
                 PersonParticipant.permission,
                 true(),
-                PersonParticipant.community == id,
+                PersonParticipant.community == id_,
             )
         )
     )

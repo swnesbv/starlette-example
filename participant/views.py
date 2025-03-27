@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from sqlalchemy import delete
@@ -25,7 +24,9 @@ templates = Jinja2Templates(directory="templates")
 # ...
 async def participant_create(request):
     # ..
-    id = request.path_params["id"]
+    owner = int
+    double = int
+    id_ = request.path_params["id"]
     template = "/participant/create.html"
 
     async with async_session() as session:
@@ -36,12 +37,12 @@ async def participant_create(request):
             # ..
             if prv:
                 double = await stop_double(
-                    session, PersonParticipant, prv.id, id
+                    session, PersonParticipant, prv.id, id_
                 )
             # ..
             if request.cookies.get("visited"):
                 double = await stop_double(
-                    session, PersonParticipant, request.user.user_id, id
+                    session, PersonParticipant, request.user.user_id, id_
                 )
             # ...
             if not double:
@@ -49,7 +50,7 @@ async def participant_create(request):
                     template, {"request": request},
                 )
             return RedirectResponse(
-                f"/chat/group/{ id }",
+                f"/chat/group/{ id_ }",
                 status_code=302,
             )
         # ...
@@ -63,7 +64,7 @@ async def participant_create(request):
             if request.cookies.get("visited"):
                 owner = request.user.user_id
             # ..
-            community = id
+            community = id_
             explanatory_note = form["explanatory_note"]
             # ..
             new = PersonParticipant()
@@ -76,7 +77,7 @@ async def participant_create(request):
             await session.commit()
             # ..
             return RedirectResponse(
-                f"/chat/group/{id}",
+                f"/chat/group/{id_}",
                 status_code=302,
             )
     await engine.dispose()
@@ -85,26 +86,26 @@ async def participant_create(request):
 @auth()
 # ...
 async def participant_list(request):
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/participant/list.html"
 
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
-        in_true = await all_true(session, id)
-        in_false = await all_false(session, id)
+        in_true = await all_true(session, id_)
+        in_false = await all_false(session, id_)
         # ..
         context = {"request": request}
         # ..
         if prv:
-            obj_prv = await person_participant(session, GroupChat, prv.id)
-            if obj_prv:
+            i_prv = await person_participant(session, GroupChat, prv.id)
+            if i_prv:
                 context["in_true"] = in_true
                 context["in_false"] = in_false
         # ..
         if request.cookies.get("visited"):
-            obj_user = await person_participant(session, GroupChat, request.user.user_id)
-            if obj_user:
+            i_user = await person_participant(session, GroupChat, request.user.user_id)
+            if i_user:
                 context["in_true"] = in_true
                 context["in_false"] = in_false
         return templates.TemplateResponse(template, context)
@@ -115,20 +116,22 @@ async def participant_list(request):
 # ...
 async def participant_add(request):
     # ..
-    id = request.path_params["id"]
+    i_prv = int
+    i_user = int
+    id_ = request.path_params["id"]
 
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
         # ..
         if prv:
-            obj_prv = await person_participant(session, GroupChat, prv.id)
+            i_prv = await person_participant(session, GroupChat, prv.id)
         # ..
         if request.cookies.get("visited"):
-            obj_user = await person_participant(session, GroupChat, request.user.user_id)
+            i_user = await person_participant(session, GroupChat, request.user.user_id)
         #...
-        if obj_prv or obj_user:
-            i = await for_id(session, PersonParticipant, id)
+        if i_prv or i_user:
+            i = await for_id(session, PersonParticipant, id_)
             # ..
             i.permission = True
             await session.commit()
@@ -144,20 +147,22 @@ async def participant_add(request):
 # ...
 async def participant_delete(request):
     # ..
-    id = request.path_params["id"]
+    i_prv = int
+    i_user = int
+    id_ = request.path_params["id"]
 
     async with async_session() as session:
         # ..
         prv = await get_privileged_user(request, session)
         # ..
         if prv:
-            obj_prv = await person_participant(session, GroupChat, prv.id)
+            i_prv = await person_participant(session, GroupChat, prv.id)
         # ..
         if request.cookies.get("visited"):
-            obj_user = await person_participant(session, GroupChat, request.user.user_id)
-        if obj_prv or obj_user:
+            i_user = await person_participant(session, GroupChat, request.user.user_id)
+        if i_prv or i_user:
             # ..
-            query = delete(PersonParticipant).where(PersonParticipant.id == id)
+            query = delete(PersonParticipant).where(PersonParticipant.id == id_)
             await session.execute(query)
             await session.commit()
             # ..

@@ -27,14 +27,14 @@ templates = Jinja2Templates(directory="templates")
 # ...
 async def import_sch_csv(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/item/scheduleservice/import_csv.html"
 
     async with async_session() as session:
 
         if request.method == "GET":
             # ..
-            i = await sch_sv_user(request, session, id)
+            i = await sch_sv_user(request, session, id_)
             if i:
                 # ..
                 context = {"request": request}
@@ -48,7 +48,7 @@ async def import_sch_csv(request):
         # ...
         if request.method == "POST":
             # ..
-            result = await sch_sv_id(request, session, id)
+            result = await sch_sv_id(request, session, id_)
             # ..
             query = delete(ScheduleService).where(
                 ScheduleService.id.in_(result),
@@ -83,7 +83,7 @@ async def import_sch_csv(request):
                                 ),
                                 "created_at": datetime.now(),
                                 "owner": request.user.user_id,
-                                "sch_s_service_id": id,
+                                "sch_s_service_id": id_,
                             }
                         )
                         async for new in AsyncDictReader(afp)

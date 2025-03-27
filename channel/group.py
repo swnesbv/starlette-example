@@ -81,7 +81,7 @@ async def group_create(request):
 
 async def group_update(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/group/update.html"
 
     async with async_session() as session:
@@ -92,7 +92,7 @@ async def group_update(request):
         if request["prv"].is_authenticated:
             owner = await get_privileged_user(request, session)
         # ..
-        detail = await id_and_owner(session, GroupChat, owner, id)
+        detail = await id_and_owner(session, GroupChat, owner, id_)
         context = {
             "request": request,
             "detail": detail,
@@ -112,7 +112,7 @@ async def group_update(request):
             # ..
             query = (
                 sqlalchemy_update(GroupChat)
-                .where(GroupChat.id == id)
+                .where(GroupChat.id == id_)
                 .values(form)
                 .execution_options(synchronize_session="fetch")
             )
@@ -129,7 +129,7 @@ async def group_update(request):
 
 async def group_delete(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/group/delete.html"
     # ..
     async with async_session() as session:
@@ -140,10 +140,10 @@ async def group_delete(request):
             i = None
             if request["user"].is_authenticated:
                 owner = request.user.user_id
-                i = await id_and_owner(session, GroupChat, owner.id, id)
+                i = await id_and_owner(session, GroupChat, owner.id, id_)
             if request["prv"].is_authenticated:
                 owner = await get_privileged_user(request, session)
-                i = await id_and_owner(session, GroupChat, owner.id, id)
+                i = await id_and_owner(session, GroupChat, owner.id, id_)
             # ..
             if i:
                 return templates.TemplateResponse(
@@ -157,7 +157,7 @@ async def group_delete(request):
         # ...
         if request.method == "POST":
             # ..
-            query = delete(GroupChat).where(GroupChat.id == id)
+            query = delete(GroupChat).where(GroupChat.id == id_)
             await session.execute(query)
             await session.commit()
             # ..
@@ -173,17 +173,17 @@ async def group_delete(request):
 # ..
 async def group_details(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     id_group = request.path_params["id"]
     template = "/group/details.html"
     # ..
     if request.method == "GET":
         async with async_session() as session:
             # ..
-            i = await for_id(session, GroupChat, id)
+            i = await for_id(session, GroupChat, id_)
             prv = await get_privileged_user(request, session)
             group_chat = await left_right_all(
-                session, MessageGroup, MessageGroup.id_group, id
+                session, MessageGroup, MessageGroup.id_group, id_
             )
             # ..
             context = {
@@ -195,16 +195,18 @@ async def group_details(request):
             }
             # ..
             if prv:
-                for_prv = await in_obj_participant(session, prv.id, id)
-                for_prv_accepted = await in_obj_accepted(session, prv.id, id)
+                for_prv = await in_obj_participant(session, prv.id, id_)
+                for_prv_accepted = await in_obj_accepted(session, prv.id, id_)
                 # ..
                 context["for_prv"] = for_prv
                 context["for_prv_accepted"] = for_prv_accepted
             # ..
             if request.cookies.get("visited"):
-                for_user = await in_obj_participant(session, request.user.user_id, id)
+                for_user = await in_obj_participant(
+                    session, request.user.user_id, id_
+                )
                 for_user_accepted = await in_obj_accepted(
-                    session, request.user.user_id, id
+                    session, request.user.user_id, id_
                 )
                 # ..
                 context["for_user"] = for_user
@@ -217,8 +219,9 @@ async def group_details(request):
 async def group_list(request):
     # ..
     template = "/group/list.html"
-
+    # ..
     async with async_session() as session:
+        # ..
         result = await for_in(session, GroupChat)
         context = {
             "request": request,

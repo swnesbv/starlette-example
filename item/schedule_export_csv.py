@@ -35,23 +35,25 @@ templates = Jinja2Templates(directory="templates")
 # ...
 async def export_csv(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     # ..
     file_time = datetime.now()
     directory = (
         BASE_DIR / f"static/service/{file_time.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
     )
     filename = f"{file_time.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
-
+    # ..
     async with async_session() as session:
+        # ..
         prv = await get_privileged_user(request, session)
+        # ..
         if request.method == "GET":
             # ..
-            detail = await sch_sv_user(request, session, id)
+            detail = await sch_sv_user(request, session, id_)
             # ..
             if detail:
                 # ..
-                records = await sch_sv_service_owner_id(request, session, id)
+                records = await sch_sv_service_owner_id(request, session, id_)
                 # ..
                 async with aiofiles.open(
                     directory,
@@ -96,7 +98,7 @@ async def export_csv(request):
                     query = insert(DumpService).values(
                         title=title,
                         owner=prv.id,
-                        dump_s_service_id=id,
+                        dump_s_service_id=id_,
                     )
                     await session.execute(query)
                     await session.commit()
@@ -114,13 +116,14 @@ async def export_csv(request):
 # ...
 async def dump_csv(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/schedule/dump_csv.html"
-
+    # ..
     async with async_session() as session:
+        # ..
         if request.method == "GET":
             # ..
-            obj_list = await dump_schedule_service(request, session, id)
+            obj_list = await dump_schedule_service(request, session, id_)
             # ..
             if not obj_list:
                 return PlainTextResponse("no information available..!")
@@ -134,13 +137,16 @@ async def dump_csv(request):
 # ...
 async def delete_user_csv(request):
     # ..
-    id = request.path_params["id"]
+    id_ = request.path_params["id"]
     template = "/schedule/delete_user_csv.html"
-
+    # ..
     async with async_session() as session:
+        # ..
         if request.method == "GET":
             # ..
-            detail = await id_and_owner(session, DumpService, request.user.user_id, id)
+            detail = await id_and_owner(
+                session, DumpService, request.user.user_id, id_
+            )
             # ..
             if detail:
                 context = {"request": request}
@@ -149,14 +155,14 @@ async def delete_user_csv(request):
         # ...
         if request.method == "POST":
             # ..
-            result = await for_id(session, DumpService, id)
+            result = await for_id(session, DumpService, id_)
             root_directory = (
                 BASE_DIR
                 / f"static/service/{result.title.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
             )
             await aiofiles.os.remove(root_directory)
             # ..
-            query = delete(DumpService).where(DumpService.id == id)
+            query = delete(DumpService).where(DumpService.id == id_)
             await session.execute(query)
             await session.commit()
             # ..
